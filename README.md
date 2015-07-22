@@ -1,2 +1,2 @@
-# scrap'emall
+# scrap'em all
 We just want images!
