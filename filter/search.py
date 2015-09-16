@@ -23,22 +23,20 @@ if not os.path.exists(imagePath):
 image = Image.open(imagePath)
 h = str(imagehash.dhash(image))
 
-dir = ""
+dir = args["dataset"] 
 
-if args.has_key("dataset"):
-    dir = args["dataset"] 
-else:
+if dir is None:
     print "Dataset not specified"
     dir = UNIQUE
 
 print "Searching in %s" % dir
 
-db = shelve.open(dir+"/db.shelve", writeback = True)
-
-if not os.path.exists(UNIQUE+"/"+args["shelve"]):
-    print "no shelve found in %s" % (UNIQUE+"/"+args["shelve"])
+if not os.path.exists(dir+"/db.shelve"):
+    print "no shelve found in %s" % (dir)
     sys.exit(0)
     #indexall(UNIQUE, reindex=True)
+
+db = shelve.open(dir+"/db.shelve", writeback = True)
     
 if db.has_key(h):
     print "Already there"
