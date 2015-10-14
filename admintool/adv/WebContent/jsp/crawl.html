@@ -1,0 +1,54 @@
+
+
+
+	<table class="table" border='2' width="80%" align="right" cellpadding="0px;" cellspacing="0px;" id="grid-data">
+		<!-- <tr data-ng-repeat="result in resultRows">
+			<td data-ng-repeat="column in tableColumns" >
+				<div data-ng-show="shouldAddLink(column)">
+					<a data-ng-href="" data-ng-click="rowClicked(result)">{{result[column]}}</a>
+				</div>
+				<div data-ng-show="!shouldAddLink(column) && !shouldBeHidden(column)"> 
+					{{result[column]}}
+				</div>
+				<div data-ng-show="shouldBeHidden(column)"> 
+					{{result[column]}}
+				</div>
+			</td>
+		</tr> -->
+			<tr>
+				<td data-ng-repeat="column in tableColumns| filter:toHide">
+				 	{{convertColumnCase(column)}}
+				</td>
+			</tr>
+			
+			<!-- <tr data-ng-repeat="crawl in resultData track by $index"> -->
+			<tr dir-paginate="crawl in resultRows | filter:q | itemsPerPage: pageSize" current-page="currentPage">
+				<!-- {{crawl.logo}} -->
+				<td width="10%"><a data-ng-href="" data-ng-click="open(crawl)"><img src='images/1.jpg' height="40px" width="85px"/></a></td>
+				<!-- <td width="10%"><a href="http://dummyimage.com/600x400/000/fff.png" download="alternate-filename.png"><img src="http://dummyimage.com/150x100/000/fff.png"></a></td> -->
+				<!-- <td width="10%"><a href="{{crawl.logo}}" download="alternate-filename.png"><img src="{{crawl.logo}}"></a></td> -->
+				
+				<td width="15%"><input type="text" name="cpname" id="icp{{$index}}" style='display:block; width:140px;' disabled='true' value={{crawl.companyName}}></input></td>
+				<td width="15%"><input type="text" name="brname" id="ibr{{$index}}" style='display:block; width:140px;' disabled='true' value={{crawl.brandName}}></input></td>
+				<td width="15%">
+					<select data-ng-model="selectCategory" name="category" id="ca{{$index}}" disabled>
+						<option id="cat{{$index}}" data-ng-repeat="categoryBean in listCategory" value="{{categoryBean.category}}"
+						data-ng-selected="{{categoryBean.category == crawl.category}}">{{categoryBean.category}}</option>
+					</select>
+
+				</td>
+				<td width="15%">
+					<select  data-ng-model="crawl.subcategory" name="subcategory" id="sca{{$index}}" disabled>
+						<option data-ng-repeat="subCategoryBean in listSubCategory" value="{{subCategoryBean.subCategory}}"  
+						data-ng-selected="{{subCategoryBean.subCategory == crawl.subcategory}}">{{subCategoryBean.subCategory}}</option>
+					</select>
+				</td>												
+				<td width="15%"><div id="lu{{$index}}">{{ crawl.lastUpdatedDate }}</div></td>
+				<td width="5%"><input type="button" name="saveRow" id="saveRowId{{$index}}" data-ng-click="saveRow($index)" disabled='true' value="SAVE"/></td>
+				<td width="5%"><input type="button" name="editRow" data-ng-click="editRow($index)" value="EDIT"/></td>
+				<td width="1%"><input type="hidden" name="crawlId" id="crawlId{{$index}}" style='display:block; width:40px;' disabled='true' value={{crawl.crawlId}}></input></td>
+
+			</tr>
+		
+	</table>
+

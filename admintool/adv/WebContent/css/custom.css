@@ -1,0 +1,124 @@
+/* skin-blue navbar */
+.skin-blue .navbar {
+  //background-color: #e50000;
+  background-color: #3D9970;
+}
+
+
+/* skin-blue logo */
+.skin-blue .logo {
+  //background-color: #e50000;
+  background-color: #3D9970;
+  color: #ffffff;
+}
+.skin-blue .logo > a {
+  color: #f9f9f9;
+}
+.skin-blue .logo:hover {
+  background: #3D9970;
+}
+
+.skin-blue .navbar .nav a {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.form-box .header {
+	background-color: #3D9970;	
+	box-shadow: none;
+}
+
+.bg-red {
+  background-color: #3D9970 !important;
+  /* background-color: #e50000 !important; */
+}
+
+.bg-white {
+  background-color: #F0F8FF !important;
+  /* background-color: #e50000 !important; */
+}
+
+#leftpannel {
+	margin: auto;	
+	width: 200px;
+	height: 150px;
+    background: url("../images/1.jpg") floating;
+   -webkit-background-size: cover;
+   -moz-background-size: cover;
+   -o-background-size: cover;
+   background-size: cover;   
+   text-align: left;   
+   border-radius: 10px; 
+   border:1px;
+   background-color: red;
+
+}
+
+#login-banner {
+	margin: auto;	
+	width: 1200px;
+	height: 550px;
+    background: url("../images/home2.jpg") no-repeat center center fixed;
+   -webkit-background-size: cover;
+   -moz-background-size: cover;
+   -o-background-size: cover;
+   background-size: cover;   
+   text-align: center;   
+    opacity: 0.8;
+ 	border-radius: 10px;  
+}
+
+#login-banner h1{
+	color: #FFFFFF;	
+	font-weight: bold;
+	/* background: #e50000; */ 
+}
+
+.form-box{
+	/*margin-top: 40px;*/	
+
+}
+
+.btn-primary{
+	background-color: #3D9970 !important;	
+}
+
+.btn-primary-localcard{
+  background-color: #337ab7;
+}
+
+.btn-info-localcard {
+  background-color: #5bc0de;
+}
+
+.search {
+    font-family: "Georgia, serif", Georgia, serif;
+	font-weight: bold;
+	color:black;
+}
+
+table tr td {
+    font-family: "Georgia, serif", Georgia, serif;
+	font-weight: bold;
+	color:#9000A1;
+}
+
+.sidebar-offcanvas {
+	font-family: "Georgia, serif", Georgia, serif;
+	font-weight: bold;
+	color:#white;
+	
+	margin: left;	
+	width: 190px;
+	height: 50px;
+    background: url("../images/1.jpg") no-repeat center center floating;
+   
+   -webkit-background-size: cover;
+   -moz-background-size: cover;
+   -o-background-size: cover;
+   
+   background-size: cover;   
+   text-align: left;   
+   border-radius: 1px; 
+   border:1px;
+   background-color: #ddf1fe;
+}
