@@ -8,7 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="LIST")
+@Table(name="list")
 public class CrawlList {
 
 	@Id

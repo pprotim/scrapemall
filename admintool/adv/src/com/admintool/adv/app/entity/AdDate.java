@@ -13,7 +13,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 @Entity
-@Table(name ="DATE")
+@Table(name ="Date")
 public class AdDate {
 
 	@Id

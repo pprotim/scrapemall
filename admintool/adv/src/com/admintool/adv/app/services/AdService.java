@@ -62,14 +62,17 @@ public class AdService {
 			for(Crawl crawl : list) {
 				CrawlBean crawlBean = new CrawlBean();
 				
-				Company company = adDao.getCompanyById(crawl.getCompanyId());
 				Advertisement advertisement = adDao.getAdvertisementById(crawl.getAdId());
 				crawlBean.setCrawlId(crawl.getCrawlId()+"");
 				crawlBean.setLogo(advertisement.getUrl());
-				crawlBean.setCompanyName(company.getName());
-				crawlBean.setBrandName(company.getBrand());
-				crawlBean.setCategory(company.getCategory());
-				crawlBean.setSubcategory(company.getSubCategory());
+				if(crawl.getCompanyId()!=null) {
+					
+					Company company = adDao.getCompanyById(crawl.getCompanyId());
+					crawlBean.setCompanyName(company.getName());
+					crawlBean.setBrandName(company.getBrand());
+					crawlBean.setCategory(company.getCategory());
+					crawlBean.setSubcategory(company.getSubCategory());
+				}
 				crawlBean.setLastUpdatedDate(AdService.getDateFormat().format(crawl.getModifiedDateTime()));
 				listCrawlBean.add(crawlBean);
 			}
@@ -84,27 +87,52 @@ public class AdService {
 		System.out.println("Inside saveAndUpdate");
 		
 		Crawl crawl = adDao.getCrawlById(Integer.valueOf(crawlBean.getCrawlId()));
-		
-		Company company = adDao.getCompanyById(crawl.getCompanyId());
-		AdDate adDate = adDao.getAdDateById(crawl.getDateId());
-		
 		Date lastModified = AdService.getCurrentDateTime();
+		Company company = null;
+		if(crawl.getCompanyId()!=null) {
+			company = adDao.getCompanyById(crawl.getCompanyId());
+			if(company!=null) {
+				company = getCompanyData(company, crawlBean, lastModified);
+				adDao.saveOrUpdate(company);
+				
+			}else {
+				company = getCompanyData(company, crawlBean, lastModified);
+				adDao.saveOrUpdate(company);
+			}
+			
+		} else {
+			
+			company = getCompanyData(null, crawlBean, lastModified);
+			adDao.saveOrUpdate(company);
+		}
+		
+		AdDate adDate = adDao.getAdDateById(crawl.getDateId());
+		if(adDate!=null) {
+			adDate.setDatetime(lastModified);
+			adDao.saveOrUpdate(adDate);
+		}
+		
+		crawl.setModifiedDateTime(lastModified);
+		crawl.setCompanyId(company.getId());
+		adDao.saveOrUpdate(crawl);
+		return true;
+		
+	}
+	
+	private Company getCompanyData(Company companyParam, CrawlBean crawlBean, Date lastModified) {
+		Company company = null;
+		if(companyParam==null)
+			company = new Company();
+		else
+			company = companyParam;
 		
 		company.setName(crawlBean.getCompanyName());
 		company.setBrand(crawlBean.getBrandName());
 		company.setCategory(crawlBean.getCategory());
 		company.setSubCategory(crawlBean.getSubcategory());
 		company.setModifiedDateTime(lastModified);
-		adDao.saveOrUpdate(company);
-		
-		adDate.setDatetime(lastModified);
-		adDao.saveOrUpdate(adDate);
-		
-		crawl.setModifiedDateTime(lastModified);
-		adDao.saveOrUpdate(crawl);
-		
-		return true;
-		
+		return company;
+				
 	}
 	
 	public static Date getCurrentDateTime(){

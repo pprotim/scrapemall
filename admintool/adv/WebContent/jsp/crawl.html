@@ -31,14 +31,14 @@
 				<td width="15%"><input type="text" name="cpname" id="icp{{$index}}" style='display:block; width:140px;' disabled='true' value={{crawl.companyName}}></input></td>
 				<td width="15%"><input type="text" name="brname" id="ibr{{$index}}" style='display:block; width:140px;' disabled='true' value={{crawl.brandName}}></input></td>
 				<td width="15%">
-					<select data-ng-model="selectCategory" name="category" id="ca{{$index}}" disabled>
+					<select style="width: 100px;" data-ng-model="selectCategory" name="category" id="ca{{$index}}" disabled>
 						<option id="cat{{$index}}" data-ng-repeat="categoryBean in listCategory" value="{{categoryBean.category}}"
 						data-ng-selected="{{categoryBean.category == crawl.category}}">{{categoryBean.category}}</option>
 					</select>
 
 				</td>
 				<td width="15%">
-					<select  data-ng-model="crawl.subcategory" name="subcategory" id="sca{{$index}}" disabled>
+					<select style="width: 100px;" data-ng-model="crawl.subcategory" name="subcategory" id="sca{{$index}}" disabled>
 						<option data-ng-repeat="subCategoryBean in listSubCategory" value="{{subCategoryBean.subCategory}}"  
 						data-ng-selected="{{subCategoryBean.subCategory == crawl.subcategory}}">{{subCategoryBean.subCategory}}</option>
 					</select>

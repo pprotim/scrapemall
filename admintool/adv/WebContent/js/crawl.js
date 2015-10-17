@@ -97,14 +97,16 @@ app.controller('CrawlController',['$scope', '$rootScope','$http', '$interval', '
 					searchDate : searchDateVar,
 			};
 			
+			$scope.listCategory = [];
 			GetCategoryService.getCategoryData(dataObject).then(function(result) {
 				$scope.listCategory = result.data;
-				console.log('$scope.listCategory='+$scope.listCategory);
+				//console.log('$scope.listCategory='+$scope.listCategory);
 		    });
 			
+			$scope.listSubCategory = [];
 			GetSubCategoryService.getSubCategoryData(dataObject).then(function(result) {
 				$scope.listSubCategory = result.data;
-				console.log('$scope.listSubCategory='+$scope.listSubCategory);
+				//console.log('$scope.listSubCategory='+$scope.listSubCategory);
 		    });
 			
 			SearchCrawlByDateService.getCrawlData(dataObject).then(function(result) {
@@ -253,7 +255,7 @@ app.controller('CrawlController',['$scope', '$rootScope','$http', '$interval', '
 		}
 		
 		//angularUtils Pagination starts below....
-		$scope.pageSize = 2;
+		$scope.pageSize = 5;
 		$rootScope.currentPage = 1;
 		$scope.pageChangeHandler = function(num) {
 			console.log('meals page changed to ' + num);
