@@ -26,9 +26,17 @@ app.factory('GetSubCategoryService', function($http) {
 	   }
 });
 
+app.factory('GetSubCategoryServiceByCategoryId', function($http) {
+	   return {
+		   	getSubCategoryByCategoryId : function(dataObject) {
+	        	return $http.get("getListSubCategoryByCategoryId", {params:dataObject});
+	        }
+	   }
+});
 
-app.controller('CrawlController',['$scope', '$rootScope','$http', '$interval', '$q','$modal', '$log','SearchCrawlByDateService','GetCategoryService','GetSubCategoryService',
-                                  function($scope, $rootScope,$http, $interval, $q, $modal, $log, SearchCrawlByDateService,GetCategoryService,GetSubCategoryService) {
+
+app.controller('CrawlController',['$scope', '$rootScope','$http', '$interval', '$q','$modal', '$log','SearchCrawlByDateService','GetCategoryService','GetSubCategoryService','GetSubCategoryServiceByCategoryId',
+                                  function($scope, $rootScope,$http, $interval, $q, $modal, $log, SearchCrawlByDateService,GetCategoryService,GetSubCategoryService, GetSubCategoryServiceByCategoryId) {
 	
 		$scope.showResultTable = false;
 	    $scope.zeroRecords = false;
@@ -131,6 +139,21 @@ app.controller('CrawlController',['$scope', '$rootScope','$http', '$interval', '
 	     	    $scope.showProgressBar = false;
 		    });
 		}//submitForm function
+		
+		
+		$scope.onChangeGetSubCategoryList = function(categoryId) {
+			//var categoryId=$scope.selectCategory;
+	    	console.log('Received categoryId='+categoryId);
+	    	var dataObject = {
+	    			categoryId : categoryId,
+			};
+	    	
+	    	GetSubCategoryServiceByCategoryId.getSubCategoryByCategoryId(dataObject).then(function(result) {
+				$scope.listSubCategory = result.data;
+				console.log('$scope.listSubCategory By GetSubCategoryServiceByCategoryId method ='+$scope.listSubCategory);
+		    });
+	    	return false;
+	    }
 	    
 	    
 		$scope.editRow = function(id) {

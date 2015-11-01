@@ -38,13 +38,13 @@ public class AdDate {
 	private String year;
 	
 	@Column(name = "ISWEEKDAY")
-	private boolean isWeekDay;
+	private Boolean isWeekDay;
 	
 	@Column(name = "ISWEEKEND")
-	private boolean isWeekEnd;
+	private Boolean isWeekEnd;
 	
 	@Column(name = "ISHOLIDAY")
-	private boolean isHoliday;
+	private Boolean isHoliday;
 	
 	public Integer getId() {
 		return id;
@@ -82,22 +82,24 @@ public class AdDate {
 	public void setYear(String year) {
 		this.year = year;
 	}
-	public boolean isWeekDay() {
+	public Boolean getIsWeekDay() {
 		return isWeekDay;
 	}
-	public void setWeekDay(boolean isWeekDay) {
+	public void setIsWeekDay(Boolean isWeekDay) {
 		this.isWeekDay = isWeekDay;
 	}
-	public boolean isWeekEnd() {
+	public Boolean getIsWeekEnd() {
 		return isWeekEnd;
 	}
-	public void setWeekEnd(boolean isWeekEnd) {
+	public void setIsWeekEnd(Boolean isWeekEnd) {
 		this.isWeekEnd = isWeekEnd;
 	}
-	public boolean isHoliday() {
+	public Boolean getIsHoliday() {
 		return isHoliday;
 	}
-	public void setHoliday(boolean isHoliday) {
+	public void setIsHoliday(Boolean isHoliday) {
 		this.isHoliday = isHoliday;
 	}
+
+
 }

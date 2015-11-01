@@ -93,6 +93,17 @@ public class AdDaoImpl extends BaseDaoImpl implements AdDao{
 		CategorySubCategory categorySubCategory = (CategorySubCategory)query.uniqueResult();
 		return categorySubCategory;
 	}
+	
+	@Override
+	public List<CategorySubCategory> getSubCategoryListByCategoryId(Integer categoryId) {
+		
+		String baseQuery = "SELECT c FROM CategorySubCategory c WHERE categoryID=:categoryIdParam";
+		Session session = getSessionFactory().getCurrentSession();
+		Query query = session.createQuery(baseQuery);
+		query.setParameter("categoryIdParam", categoryId);
+		return query.list();
+	}
+	
 	public Channel getChannelById(Integer channelId) {
 		String baseQuery = "SELECT a FROM Channel a WHERE a.id=:channelId";
 		Session session = getSessionFactory().getCurrentSession();
@@ -146,6 +157,5 @@ public class AdDaoImpl extends BaseDaoImpl implements AdDao{
 		
 		return baseQuery;
 	}
-
 
 }

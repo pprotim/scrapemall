@@ -31,9 +31,10 @@
 				<td width="15%"><input type="text" name="cpname" id="icp{{$index}}" style='display:block; width:140px;' disabled='true' value={{crawl.companyName}}></input></td>
 				<td width="15%"><input type="text" name="brname" id="ibr{{$index}}" style='display:block; width:140px;' disabled='true' value={{crawl.brandName}}></input></td>
 				<td width="15%">
-					<select style="width: 100px;" data-ng-model="selectCategory" name="category" id="ca{{$index}}" disabled>
-						<option id="cat{{$index}}" data-ng-repeat="categoryBean in listCategory" value="{{categoryBean.category}}"
-						data-ng-selected="{{categoryBean.category == crawl.category}}">{{categoryBean.category}}</option>
+					<select style="width: 100px;" ng-change="onChangeGetSubCategoryList(selectCategory)"
+					data-ng-model="selectCategory" name="category" id="ca{{$index}}" disabled>
+						<option id="cat{{$index}}" data-ng-repeat="categoryBean in listCategory" value="{{categoryBean.categoryID}}"
+						data-ng-selected="{{categoryBean.category == crawl.category}}" >{{categoryBean.category}}</option>
 					</select>
 
 				</td>

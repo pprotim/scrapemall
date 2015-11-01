@@ -3,10 +3,13 @@ package com.admintool.adv.app.controller;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -67,11 +70,13 @@ public class CrawlController {
 		List<CrawlBean> listCrawlBean = adService.searchCrawlDetails(searchCriteria);
 		model.addAttribute("crawlList", listCrawlBean);
 		
-		List<CategoryBean> listCategory = getListCategory(CATEGORY_BEAN_LIST);
-		model.addAttribute("listCategory", listCategory);
+		Set<CategoryBean> setCategory = getListCategory(CATEGORY_BEAN_LIST);
+		model.addAttribute("listCategory", setCategory);
+		System.out.println("setCategory in searchCrawlDetails="+setCategory);
 		
 		List<SubCategoryBean> listSubCategory = getListSubCategory(SUBCATEGORY_BEAN_LIST);
 		model.addAttribute("listSubCategory", listSubCategory);
+		System.out.println("listSubCategory in searchCrawlDetails="+listSubCategory);
 		
 		Gson gson = new Gson();
 		String json = gson.toJson(listCrawlBean);
@@ -125,26 +130,30 @@ public class CrawlController {
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private List<CategoryBean> getListCategory(String CATEGORY_BEAN_LIST) {
+	private Set<CategoryBean> getListCategory(String CATEGORY_BEAN_LIST) {
 		
 		Map<String, List> mapOfCategorySubcategory = this.fetchAllCategoriesSubCategories();
 		List<CategoryBean> listCategory = mapOfCategorySubcategory.get(CATEGORY_BEAN_LIST);
 		
-		return listCategory;
+		Set<CategoryBean> setCategory = new TreeSet<CategoryBean>();
+		setCategory.addAll(listCategory);
+		
+		System.out.println("setCategory in getListCategory method="+setCategory);
+		
+		return setCategory;
 	}
 	
 	@RequestMapping(value = {"/getListCategory"}, method = RequestMethod.GET)
-	public @ResponseBody List<CategoryBean> getListCategory(HttpServletRequest request, Model model) {
+	public @ResponseBody Set<CategoryBean> getListCategory(HttpServletRequest request, Model model) {
 		
-		List<CategoryBean> listCategory = (List<CategoryBean>)request.getSession().getAttribute(CATEGORY_BEAN_LIST);
-		if(listCategory==null || listCategory.size()==0) {
+		Set<CategoryBean> setCategory = (Set<CategoryBean>)request.getSession().getAttribute(CATEGORY_BEAN_LIST);
+		if(setCategory==null || setCategory.size()==0) {
 			
-			listCategory = this.getListCategory(CATEGORY_BEAN_LIST);
-			request.getSession().setAttribute(CATEGORY_BEAN_LIST, listCategory);
-			
+			setCategory = this.getListCategory(CATEGORY_BEAN_LIST);
+			request.getSession().setAttribute(CATEGORY_BEAN_LIST, setCategory);
 		}
 		
-		return listCategory;
+		return setCategory;
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -152,6 +161,7 @@ public class CrawlController {
 		
 		Map<String, List> mapOfCategorySubcategory = this.fetchAllCategoriesSubCategories();
 		List<SubCategoryBean> listSubCategory = mapOfCategorySubcategory.get(SUBCATEGORY_BEAN_LIST);
+		Collections.sort(listSubCategory);
 		
 		return listSubCategory;
 	}
@@ -166,6 +176,23 @@ public class CrawlController {
 			request.getSession().setAttribute(SUBCATEGORY_BEAN_LIST, listSubCategory);
 		
 		}
+		return listSubCategory;
+	}
+	
+	@RequestMapping(value = {"/getListSubCategoryByCategoryId"}, method = RequestMethod.GET)
+	public @ResponseBody List<SubCategoryBean> getListSubCategoryByCategoryId(HttpServletRequest request, Model model,
+			@RequestParam(value = "categoryId", required = false) String categoryIdString) {
+		
+		Integer categoryId = 0;
+		if(categoryIdString!=null){
+			try{
+			categoryId = Integer.parseInt(categoryIdString); 
+			}catch(NumberFormatException nfe) {
+				nfe.printStackTrace();
+			}
+		}
+		List<SubCategoryBean> listSubCategory = adService.getSubCategoryListByCategoryId(categoryId);
+		
 		return listSubCategory;
 	}
 	

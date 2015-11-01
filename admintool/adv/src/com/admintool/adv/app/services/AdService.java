@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.admintool.adv.app.beans.CrawlBean;
+import com.admintool.adv.app.beans.SubCategoryBean;
 import com.admintool.adv.app.dao.AdDao;
 import com.admintool.adv.app.entity.AdDate;
 import com.admintool.adv.app.entity.Advertisement;
@@ -37,21 +38,23 @@ public class AdService {
 	public List<CategorySubCategory> fetchAllCategoriesSubCategories(){
 		
 		List<CategorySubCategory> list =  adDao.fetchAllCategoriesSubCategories();
-		/*List<CategorySubCategoryBean> listBean = new ArrayList<CategorySubCategoryBean>();
-		for(CategorySubCategory catSubCat : list) {
-			
-			CategorySubCategoryBean bean = new CategorySubCategoryBean();
-			
-			bean.setId(catSubCat.getId()+"");
-			bean.setCategoryID(catSubCat.getCategoryID()+"");
-			bean.setCategory(catSubCat.getCategory());
-			bean.setSubCategoryID(catSubCat.getSubCategoryID()+"");
-			bean.setSubCategory(catSubCat.getSubCategory());
-			System.out.println(bean);
-			listBean.add(bean);
-		}*/
-		
+				
 		return list;
+	}
+	
+	public List<SubCategoryBean> getSubCategoryListByCategoryId(Integer categoryId){
+		
+		List<CategorySubCategory> listSubCategory =  adDao.getSubCategoryListByCategoryId(categoryId);
+		List<SubCategoryBean> listSubCategoryBean = new ArrayList<SubCategoryBean>();
+		for(CategorySubCategory catSubCat : listSubCategory) {
+			
+			SubCategoryBean subCategoryBean = new SubCategoryBean();
+			subCategoryBean.setSubCategoryID(catSubCat.getSubCategoryID()+"");
+			subCategoryBean.setSubCategory(catSubCat.getSubCategory());
+			listSubCategoryBean.add(subCategoryBean);
+		}
+				
+		return listSubCategoryBean;
 	}
 	
 	public List<CrawlBean> searchCrawlDetails(Map<String, Object> searchCriteria){
@@ -64,6 +67,7 @@ public class AdService {
 				
 				Advertisement advertisement = adDao.getAdvertisementById(crawl.getAdId());
 				crawlBean.setCrawlId(crawl.getCrawlId()+"");
+				if(advertisement!=null)
 				crawlBean.setLogo(advertisement.getUrl());
 				if(crawl.getCompanyId()!=null) {
 					

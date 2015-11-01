@@ -5,10 +5,7 @@ import java.util.List;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Configuration;
-import org.junit.Before;
-import org.junit.Test;
 
-import com.admintool.adv.app.dao.impl.AdDaoImpl;
 import com.admintool.adv.app.entity.AdDate;
 import com.admintool.adv.app.entity.Advertisement;
 import com.admintool.adv.app.entity.CategorySubCategory;
@@ -16,6 +13,7 @@ import com.admintool.adv.app.entity.Channel;
 import com.admintool.adv.app.entity.Company;
 import com.admintool.adv.app.entity.Website;
 
+@SuppressWarnings("deprecation")
 public class AdDaoImplTest {
 
 	private SessionFactory sessionFactory;

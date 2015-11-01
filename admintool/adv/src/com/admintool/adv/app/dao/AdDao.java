@@ -3,10 +3,6 @@ package com.admintool.adv.app.dao;
 import java.util.List;
 import java.util.Map;
 
-import org.hibernate.Query;
-import org.hibernate.Session;
-
-import com.admintool.adv.app.beans.CrawlBean;
 import com.admintool.adv.app.entity.AdDate;
 import com.admintool.adv.app.entity.Advertisement;
 import com.admintool.adv.app.entity.CategorySubCategory;
@@ -30,6 +26,8 @@ public interface AdDao {
 	public Advertisement getAdvertisementById(Integer advertisementId) ;
 	
 	public CategorySubCategory getCategorySubCategoryById(Integer categorySubCategoryId) ;
+	
+	public List<CategorySubCategory> getSubCategoryListByCategoryId(Integer categoryId) ;
 	
 	public Channel getChannelById(Integer channelId) ;
 	
