@@ -58,6 +58,7 @@ public class AdDaoImpl extends BaseDaoImpl implements AdDao{
 		baseQuery = getCriteriaValue(searchCriteria, baseQuery);
 
 		Query query = session.createQuery(baseQuery);
+		query.setMaxResults(200);
 		
 		List list = query.list();
 		

@@ -47,7 +47,7 @@ function changeColor(id)
 								</a>
 							</li>
 							<li class="treeview">
-								<a href="login">
+								<a href="logout">
 									<i class="fa-li fa fa-square"></i> 
 									<span>Logout</span>
 								</a>

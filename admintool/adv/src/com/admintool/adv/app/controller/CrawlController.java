@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -67,7 +68,8 @@ public class CrawlController {
 		searchCriteria.put("datetime", resultSearchDate);
 		
 		//Getting from database
-		List<CrawlBean> listCrawlBean = adService.searchCrawlDetails(searchCriteria);
+		HttpSession session = request.getSession();
+		List<CrawlBean> listCrawlBean = adService.searchCrawlDetails(searchCriteria,session);
 		model.addAttribute("crawlList", listCrawlBean);
 		
 		Set<CategoryBean> setCategory = getListCategory(CATEGORY_BEAN_LIST);
@@ -143,6 +145,7 @@ public class CrawlController {
 		return setCategory;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(value = {"/getListCategory"}, method = RequestMethod.GET)
 	public @ResponseBody Set<CategoryBean> getListCategory(HttpServletRequest request, Model model) {
 		
@@ -166,6 +169,7 @@ public class CrawlController {
 		return listSubCategory;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(value = {"/getListSubCategory"}, method = RequestMethod.GET)
 	public @ResponseBody List<SubCategoryBean> getListSubCategory(HttpServletRequest request, Model model) {
 		

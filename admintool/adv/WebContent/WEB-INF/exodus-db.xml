@@ -23,7 +23,8 @@
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">
 		<list>
-			<value>/WEB-INF/spring.properties</value>
+			<value>/WEB-INF/conf/spring.properties</value>
+			<value>/WEB-INF/conf/s3key.properties</value>
 		</list>
 		</property>
 	</bean>

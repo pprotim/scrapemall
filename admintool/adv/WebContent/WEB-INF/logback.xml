@@ -33,6 +33,11 @@
 		<appender-ref ref="STDOUT" />
 	</logger>
 	
+	<logger name="org.apache.http" level="ERROR">
+		<appender-ref ref="FILE-AUDIT" />
+		<appender-ref ref="STDOUT" />
+	</logger>
+	
 	<root level="INFO">
 		<appender-ref ref="STDOUT" />
 	</root>
