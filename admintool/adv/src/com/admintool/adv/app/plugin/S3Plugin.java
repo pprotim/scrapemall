@@ -24,13 +24,13 @@ public class S3Plugin {
 
 	private static HashMap<String,List<S3ObjectSummary>> mapOfS3ObjectSummary = new HashMap<String, List<S3ObjectSummary>>();
 	@Value("${aws.s3.bucket}")
-	private String bucketName;
+	private String bucketName="adsrepo";
 	
     @Value("${aws.access.key}")
-    private String accessKey;
+    private String accessKey="AKIAJZAX3IQD3NS6QZRQ";
 	
     @Value("${aws.secret.key}")
-	private String secretKey;
+	private String secretKey="fQI0FpZUkcwapZU5jy4ZSNakGLOGcqEmSM5WJC3C";
 	
 	private AWSCredentials getAwsCredentials() {
 		AWSCredentials credentials = new BasicAWSCredentials(accessKey,secretKey);
@@ -43,7 +43,7 @@ public class S3Plugin {
 		return s3client;
 	}
     
-	public InputStream getImageFromS3(String keyName) throws FileNotFoundException, IOException{
+	public InputStream getImageFromS3(String keyName, String prefixDatetimeS3Format) throws FileNotFoundException, IOException{
 		
 		System.out.println("Fetching for the key ="+keyName);
 		S3ObjectInputStream objectContent = null;
@@ -51,7 +51,7 @@ public class S3Plugin {
 		AmazonS3 s3client = getAmazonS3();
 		List<S3ObjectSummary> listOfS3ObjectSummary = mapOfS3ObjectSummary.get(bucketName);
 		if(listOfS3ObjectSummary==null) {
-			ObjectListing objects = s3client.listObjects(bucketName);
+			ObjectListing objects = s3client.listObjects(bucketName, prefixDatetimeS3Format);
 			listOfS3ObjectSummary = objects.getObjectSummaries();
 			mapOfS3ObjectSummary.put(bucketName, listOfS3ObjectSummary);
 		}
@@ -76,7 +76,7 @@ public class S3Plugin {
 	
 	/*public static void main(String[] args) throws FileNotFoundException, IOException {
 		S3Plugin instance = new S3Plugin();
-		String keyName = "img20151020171839231";
-		System.out.println("Returned input stream is="+instance.getImageFromS3(keyName));
+		String keyName = "img20151104093507221";
+		System.out.println("Returned input stream is="+instance.getImageFromS3(keyName,"img20151104"));
 	}*/
 }

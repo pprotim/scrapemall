@@ -54,9 +54,10 @@ public class CrawlController {
 		}
 		
 		String resultSearchDate = StringUtils.EMPTY;
-		
+		String searchDateS3Format = StringUtils.EMPTY;
 		try{
 			resultSearchDate = formatSearchDate(searchDate);
+			searchDateS3Format = formatSearchDateFForS3(searchDate);//yyyyMMdd format
 		}catch(Exception e) {
 			resultSearchDate = "Invalid date format:"+e.getMessage();
 			e.printStackTrace();
@@ -66,6 +67,7 @@ public class CrawlController {
 		
 		Map<String, Object> searchCriteria = new HashMap<String, Object>();
 		searchCriteria.put("datetime", resultSearchDate);
+		searchCriteria.put("datetimeS3Format",searchDateS3Format );
 		
 		//Getting from database
 		HttpSession session = request.getSession();
@@ -255,5 +257,17 @@ public class CrawlController {
 	    resultSearchDate = sdf.format(searchDateTime);
 	    System.out.println("Search date after setting proper format:"+resultSearchDate);
 	    return resultSearchDate;
+	}
+	
+	private String formatSearchDateFForS3(String searchDate) throws ParseException {
+		
+		String resultSearchDateForS3 = StringUtils.EMPTY;
+		SimpleDateFormat searchDatef = new SimpleDateFormat("MM/dd/yyyy");//from UI page
+		Date searchDateTime = searchDatef.parse(searchDate);
+		System.out.println("Search Date from UI:"+searchDateTime);
+	    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
+	    resultSearchDateForS3 = sdf.format(searchDateTime);
+	    System.out.println("Search date after setting proper format resultSearchDateForS3:"+resultSearchDateForS3);
+	    return resultSearchDateForS3;
 	}
 }

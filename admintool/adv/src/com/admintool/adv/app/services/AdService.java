@@ -33,6 +33,8 @@ import com.amazonaws.util.IOUtils;
 @Service
 public class AdService {
 	
+	private static final String STRING_DOT = ".";
+
 	@Autowired
 	private AdDao adDao;
 	
@@ -81,6 +83,7 @@ public class AdService {
 		
 		String tempDirectory = this.getUserDirectory(session);
 		String tempFolder = (String)session.getAttribute(AdService.IMAGE_TEMP_FOLDER);
+		String datetimeS3Format = (String)searchCriteria.get("datetimeS3Format");
 		
 		List<Crawl> list = adDao.searchCrawlDetails(searchCriteria);
 		if(!list.isEmpty()) {
@@ -96,7 +99,7 @@ public class AdService {
 					String extension = advertisement.getType();
 					String url = advertisement.getUrl();
 					//String logoUrl = crawlBean.setLogo(getImageFromS3URL(".jpg","https://s3-ap-southeast-1.amazonaws.com/adsrepo/img20151028194003602",(++count), tempDirectory, tempFolder));
-					String logoUrl = getImageFromS3URL(extension,url,(++count),tempDirectory, tempFolder);
+					String logoUrl = getImageFromS3URL(extension,url,(++count),tempDirectory, tempFolder, datetimeS3Format);
 					crawlBean.setLogo(logoUrl);
 					
 				}
@@ -118,7 +121,7 @@ public class AdService {
 	}
 	
 	private String getImageFromS3URL(String extensionType, String url, 
-			int count, String tempDirectory, String tempFolder) {
+			int count, String tempDirectory, String tempFolder, String datetimeS3Format) {
 		
 		String fileLocation = null;
 		String keyName = null;
@@ -126,12 +129,15 @@ public class AdService {
 		
 		if(url.contains("/") && url.contains("amazonaws.com")) {
 			keyName = url.substring(url.lastIndexOf("/")+1);
-			if(StringUtils.isNotBlank(keyName)) {
+			if(StringUtils.isNotBlank(keyName) && keyName.contains(datetimeS3Format)) {
+				System.out.println("getImageFromS3URL====keyName="+keyName);
 				try {
-					InputStream inputStream = s3Plugin.getImageFromS3(keyName);
-					fileLocation = tempDirectory+File.separator+keyName+extensionType;
-					keyName = tempFolder+File.separator+keyName+extensionType;
-					IOUtils.copy(inputStream, new FileOutputStream(fileLocation));
+					InputStream inputStream = s3Plugin.getImageFromS3(keyName, "img"+datetimeS3Format);
+					if(inputStream!=null){
+						fileLocation = tempDirectory+File.separator+keyName+STRING_DOT+extensionType;
+						keyName = tempFolder+File.separator+keyName+STRING_DOT+extensionType;
+						IOUtils.copy(inputStream, new FileOutputStream(fileLocation));
+					}
 					System.out.println("tmpdir====keyName="+keyName);
 				} catch (IOException e) {
 					e.printStackTrace();
