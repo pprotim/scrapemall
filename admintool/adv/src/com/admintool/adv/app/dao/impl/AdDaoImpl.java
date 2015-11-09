@@ -3,6 +3,7 @@ package com.admintool.adv.app.dao.impl;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
@@ -16,6 +17,7 @@ import com.admintool.adv.app.entity.Channel;
 import com.admintool.adv.app.entity.Company;
 import com.admintool.adv.app.entity.Crawl;
 import com.admintool.adv.app.entity.Website;
+import com.admintool.adv.app.services.AdService;
 
 @Repository(value = "adDao")
 @Transactional
@@ -58,7 +60,7 @@ public class AdDaoImpl extends BaseDaoImpl implements AdDao{
 		baseQuery = getCriteriaValue(searchCriteria, baseQuery);
 
 		Query query = session.createQuery(baseQuery);
-		query.setMaxResults(200);
+		query.setMaxResults(50);
 		
 		List list = query.list();
 		
@@ -95,6 +97,7 @@ public class AdDaoImpl extends BaseDaoImpl implements AdDao{
 		return categorySubCategory;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<CategorySubCategory> getSubCategoryListByCategoryId(Integer categoryId) {
 		
@@ -148,12 +151,20 @@ public class AdDaoImpl extends BaseDaoImpl implements AdDao{
 	private String getCriteriaValue(Map<String, Object> searchCriteria, String baseQuery) {
 		
 		if(!searchCriteria.isEmpty()) {
-			for(Map.Entry<String, Object> entry : searchCriteria.entrySet()) {
-				System.out.println("Searching for entry.getKey()="+entry.getKey());
-				if(entry.getKey().equalsIgnoreCase("datetime")) {
-					baseQuery = baseQuery + " WHERE createdDateTime >'"+entry.getValue()+"'";
-				}
+			
+			String fromDateTime = (String) searchCriteria.get(AdService.FROM_SEARCH_DATE);
+			String toDateTime = (String) searchCriteria.get(AdService.TO_SEARCH_DATE);
+			if(StringUtils.isNotBlank(fromDateTime) && StringUtils.isNotBlank(toDateTime)) {
+				baseQuery = baseQuery + " WHERE createdDateTime >'"+fromDateTime+"' and createdDateTime <'"+toDateTime+"'" ;
 			}
+			
+			System.out.println("Final query="+baseQuery);
+			/*for(Map.Entry<String, Object> entry : searchCriteria.entrySet()) {
+				System.out.println("Searching for entry.getKey()="+entry.getKey());
+				if(entry.getKey().equalsIgnoreCase(AdService.FROM_SEARCH_DATE)) {
+					baseQuery = baseQuery + " WHERE createdDateTime >'"+entry.getValue()+"' and createdDateTime <'"+ ;
+				}
+			}*/
 		}
 		
 		return baseQuery;

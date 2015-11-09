@@ -33,8 +33,18 @@ import com.amazonaws.util.IOUtils;
 @Service
 public class AdService {
 	
-	private static final String STRING_DOT = ".";
+	public static final String STRING_DOT = ".";
+	
+	public static final String FROM_SEARCH_DATE = "fromDateTime";
+	
+	public static final String TO_SEARCH_DATE = "toDateTime";
 
+	public final static String USER_TEMP_DIRECTORY = "userTempDirectory";
+	
+	public final static String IMAGE_TEMP_FOLDER = "imagesTempFolder";
+
+	public static final String YYYY_MM_DD_HH_MM_SS_SS = "yyyy-MM-dd HH:mm:ss.SS";
+	
 	@Autowired
 	private AdDao adDao;
 	
@@ -43,9 +53,6 @@ public class AdService {
 	
 	@Autowired
 	private ServletContext context; 
-	
-	public final static String USER_TEMP_DIRECTORY = "userTempDirectory";
-	public final static String IMAGE_TEMP_FOLDER = "imagesTempFolder";
 	
 	public String fetchAllCategories(){
 		return null;
@@ -81,9 +88,9 @@ public class AdService {
 	public List<CrawlBean> searchCrawlDetails(Map<String, Object> searchCriteria,
 			HttpSession session){
 		
-		String tempDirectory = this.getUserDirectory(session);
-		String tempFolder = (String)session.getAttribute(AdService.IMAGE_TEMP_FOLDER);
-		String datetimeS3Format = (String)searchCriteria.get("datetimeS3Format");
+		//String tempDirectory = this.getUserDirectory(session);
+		//String tempFolder = (String)session.getAttribute(AdService.IMAGE_TEMP_FOLDER);
+		//String datetimeS3Format = (String)searchCriteria.get("datetimeS3Format");
 		
 		List<Crawl> list = adDao.searchCrawlDetails(searchCriteria);
 		if(!list.isEmpty()) {
@@ -92,16 +99,17 @@ public class AdService {
 			for(Crawl crawl : list) {
 				CrawlBean crawlBean = new CrawlBean();
 				
-				Advertisement advertisement = adDao.getAdvertisementById(crawl.getAdId());
 				crawlBean.setCrawlId(crawl.getCrawlId()+"");
-				
+
+				Advertisement advertisement = adDao.getAdvertisementById(crawl.getAdId());
 				if(advertisement!=null){
-					String extension = advertisement.getType();
+					//String extension = advertisement.getType();
 					String url = advertisement.getUrl();
+					String logoUrl = url;
 					//String logoUrl = crawlBean.setLogo(getImageFromS3URL(".jpg","https://s3-ap-southeast-1.amazonaws.com/adsrepo/img20151028194003602",(++count), tempDirectory, tempFolder));
-					String logoUrl = getImageFromS3URL(extension,url,(++count),tempDirectory, tempFolder, datetimeS3Format);
+					//String logoUrl = getImageFromS3URL(extension,url,(++count),tempDirectory, tempFolder, datetimeS3Format);
 					crawlBean.setLogo(logoUrl);
-					
+					count++;
 				}
 				
 				if(crawl.getCompanyId()!=null) {
@@ -115,11 +123,14 @@ public class AdService {
 				crawlBean.setLastUpdatedDate(AdService.getDateFormat().format(crawl.getModifiedDateTime()));
 				listCrawlBean.add(crawlBean);
 			}
+			
+			System.out.println("count="+count);
 			return listCrawlBean;
 		}
 		return null;
 	}
 	
+	@SuppressWarnings("unused")
 	private String getImageFromS3URL(String extensionType, String url, 
 			int count, String tempDirectory, String tempFolder, String datetimeS3Format) {
 		
@@ -148,6 +159,7 @@ public class AdService {
 		return keyName;
 	}
 	
+	@SuppressWarnings("unused")
 	private String getUserDirectory(HttpSession session) {
 		
 		String imagesDirectory = context.getRealPath("/images");
@@ -240,7 +252,7 @@ public class AdService {
 	}
 	
 	public static SimpleDateFormat getDateFormat(){
-	    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SS");
+	    SimpleDateFormat sdf = new SimpleDateFormat(YYYY_MM_DD_HH_MM_SS_SS);
 	    return sdf;
 	}
 

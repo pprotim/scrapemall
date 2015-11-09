@@ -24,7 +24,7 @@
 			<!-- <tr data-ng-repeat="crawl in resultData track by $index"> -->
 			<tr dir-paginate="crawl in resultRows | filter:q | itemsPerPage: pageSize" current-page="currentPage">
 				<!-- {{crawl.logo}} -->
-				<td width="10%"><a data-ng-href="" data-ng-click="open(crawl.logo)"><img src='images/{{crawl.logo}}' height="40px" width="85px"/></a></td>
+				<td width="10%"><a data-ng-href="" data-ng-click="open(crawl.logo)"><img src='{{crawl.logo}}' height="40px" width="85px"/></a></td>
 				<!-- <td width="10%"><a href="http://dummyimage.com/600x400/000/fff.png" download="alternate-filename.png"><img src="http://dummyimage.com/150x100/000/fff.png"></a></td> -->
 				<!-- <td width="10%"><a href="{{crawl.logo}}" download="alternate-filename.png"><img src="{{crawl.logo}}"></a></td> -->
 				

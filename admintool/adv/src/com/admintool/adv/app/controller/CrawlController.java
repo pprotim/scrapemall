@@ -3,6 +3,7 @@ package com.admintool.adv.app.controller;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -46,28 +47,35 @@ public class CrawlController {
 	@RequestMapping(value = {"/searchByDate"}, method = RequestMethod.GET)
 	public @ResponseBody String searchByDate(@RequestParam(value = "searchDate", required = false) String searchDate,
 			HttpServletRequest request, Model model) {
-
+		
+	    SimpleDateFormat sdf =
+	          new SimpleDateFormat(AdService.YYYY_MM_DD_HH_MM_SS_SS);
+	    Calendar c1 = Calendar.getInstance(); // start time
+	    String startTime = sdf.format(c1.getTime());
+	    System.out.println("Start time="+startTime);
+	    
+	    
 		System.out.println("searchDate="+searchDate);
 		if(searchDate==null){
 			model.addAttribute("errorDate", "Search Date is null");
 			return "home";
 		}
 		
-		String resultSearchDate = StringUtils.EMPTY;
-		String searchDateS3Format = StringUtils.EMPTY;
+		String searchFromDate = StringUtils.EMPTY;
+		String searchToDate = StringUtils.EMPTY;
 		try{
-			resultSearchDate = formatSearchDate(searchDate);
-			searchDateS3Format = formatSearchDateFForS3(searchDate);//yyyyMMdd format
+			searchFromDate = formatFromSearchDate(searchDate);
+			searchToDate = formatToSearchDate(searchDate);
 		}catch(Exception e) {
-			resultSearchDate = "Invalid date format:"+e.getMessage();
+			searchFromDate = "Invalid date format:"+e.getMessage();
 			e.printStackTrace();
-			model.addAttribute("errorDate", resultSearchDate);
+			model.addAttribute("errorDate", searchFromDate);
 			return "home";
 		}
 		
 		Map<String, Object> searchCriteria = new HashMap<String, Object>();
-		searchCriteria.put("datetime", resultSearchDate);
-		searchCriteria.put("datetimeS3Format",searchDateS3Format );
+		searchCriteria.put(AdService.FROM_SEARCH_DATE, searchFromDate);
+		searchCriteria.put(AdService.TO_SEARCH_DATE, searchToDate );
 		
 		//Getting from database
 		HttpSession session = request.getSession();
@@ -85,6 +93,12 @@ public class CrawlController {
 		Gson gson = new Gson();
 		String json = gson.toJson(listCrawlBean);
 		model.addAttribute("crawlListJSON", json);
+		
+		Calendar c2 = Calendar.getInstance(); // end time
+		String endTime = sdf.format(c2.getTime());
+	    System.out.println("End time="+endTime);
+	    
+	    System.out.println("Difference time="+((c2.getTimeInMillis()-c1.getTimeInMillis())/1000)+" seconds");
 		
 		return json;
 	}
@@ -247,19 +261,32 @@ public class CrawlController {
 	}
 	
 	
-	private String formatSearchDate(String searchDate) throws ParseException {
+	private String formatFromSearchDate(String searchDate) throws ParseException {
 		
 		String resultSearchDate = StringUtils.EMPTY;
 		SimpleDateFormat searchDatef = new SimpleDateFormat("MM/dd/yyyy");//from UI page
 		Date searchDateTime = searchDatef.parse(searchDate);
-		System.out.println("Search Date from UI:"+searchDateTime);
+		System.out.println("Search From Date from UI:"+searchDateTime);
 	    SimpleDateFormat sdf = AdService.getDateFormat();
 	    resultSearchDate = sdf.format(searchDateTime);
 	    System.out.println("Search date after setting proper format:"+resultSearchDate);
 	    return resultSearchDate;
 	}
 	
-	private String formatSearchDateFForS3(String searchDate) throws ParseException {
+	private String formatToSearchDate(String searchDate) throws ParseException {
+		
+		String resultSearchToDate = StringUtils.EMPTY;
+		SimpleDateFormat searchDatef = new SimpleDateFormat("MM/dd/yyyy");//from UI page
+		Date searchDateTime = searchDatef.parse(searchDate);
+		Date searchToDateTime = new Date(searchDateTime.getTime()+86400000L);
+		System.out.println("Search To Date:"+searchToDateTime);
+	    SimpleDateFormat sdf = AdService.getDateFormat();
+	    resultSearchToDate = sdf.format(searchToDateTime);
+	    System.out.println("Search TO date after setting proper format:"+resultSearchToDate);
+	    return resultSearchToDate;
+	}
+	
+	public String formatSearchDateFForS3(String searchDate) throws ParseException {
 		
 		String resultSearchDateForS3 = StringUtils.EMPTY;
 		SimpleDateFormat searchDatef = new SimpleDateFormat("MM/dd/yyyy");//from UI page
