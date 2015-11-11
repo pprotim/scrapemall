@@ -6,6 +6,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +24,9 @@ import com.admintool.adv.app.services.AdService;
 @Transactional
 public class AdDaoImpl extends BaseDaoImpl implements AdDao{
 
+	@Value("${hibernate.maxfetchrows}")
+	private Integer maxRowsFetch;
+	
 	@Override
 	public String fetchAllCategories() {
 		// TODO Auto-generated method stub
@@ -60,7 +64,10 @@ public class AdDaoImpl extends BaseDaoImpl implements AdDao{
 		baseQuery = getCriteriaValue(searchCriteria, baseQuery);
 
 		Query query = session.createQuery(baseQuery);
-		query.setMaxResults(50);
+		if(maxRowsFetch != null) {
+			
+			query.setMaxResults(maxRowsFetch);
+		}
 		
 		List list = query.list();
 		

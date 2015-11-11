@@ -131,6 +131,7 @@ app.controller('CrawlController',['$scope', '$rootScope','$http', '$interval', '
 		    });
 			
 			SearchCrawlByDateService.getCrawlData(dataObject).then(function(result) {
+				$rootScope.resultRows = [];
 		        var errors = result.error;
 	     	    if(typeof errors!=='undefined'){
 	     		   alert("Error getting document details");

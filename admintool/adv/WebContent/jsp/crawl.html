@@ -33,7 +33,7 @@
 				<td width="15%">
 					<select style="width: 100px;" ng-change="onChangeGetSubCategoryList(selectCategory)"
 					data-ng-model="selectCategory" name="category" id="ca{{$index}}" disabled>
-						<option id="cat{{$index}}" data-ng-repeat="categoryBean in listCategory" value="{{categoryBean.categoryID}}"
+						<option id="cat{{$index}}" data-ng-repeat="categoryBean in listCategory" value="{{categoryBean.category}}"
 						data-ng-selected="{{categoryBean.category == crawl.category}}" >{{categoryBean.category}}</option>
 					</select>
 
