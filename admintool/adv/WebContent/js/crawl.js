@@ -131,7 +131,7 @@ app.controller('CrawlController',['$scope', '$rootScope','$http', '$interval', '
 		    });
 			
 			SearchCrawlByDateService.getCrawlData(dataObject).then(function(result) {
-				$rootScope.resultRows = [];
+				$scope.resultRows = [];
 		        var errors = result.error;
 	     	    if(typeof errors!=='undefined'){
 	     		   alert("Error getting document details");
@@ -139,9 +139,9 @@ app.controller('CrawlController',['$scope', '$rootScope','$http', '$interval', '
 	     	    else {
 	     	    	if(result.data.length > 0){
 	     	    		$scope.showResultTable = true;
-	     	    		$rootScope.resultRows = result.data;
+	     	    		$scope.resultRows = result.data;
 	     	    		$scope.zeroRecords = false;
-	     	    		console.log('$rootScope.resultRows='+$rootScope.resultRows);
+	     	    		console.log('$scope.resultRows='+$scope.resultRows);
 	     	    		//$scope.$watch('currentPage + numPerPage', updateFilteredItems);
 	     			   
 	     		   } else {
@@ -204,10 +204,12 @@ app.controller('CrawlController',['$scope', '$rootScope','$http', '$interval', '
 			console.log('inputBrObj:'+inputBrObj.value);
 			
 			var categoryObj = document.getElementById('ca'+id);
-			console.log('categoryObj:'+categoryObj.value);
+			console.log('categoryObj.value:'+categoryObj.value);
+			console.log('categoryObj.text:'+categoryObj.options[categoryObj.selectedIndex].text);
 			
 			var subcategoryObj = document.getElementById('sca'+id);
-			console.log('subcategoryObj:'+subcategoryObj.value);
+			console.log('subcategoryObj.value:'+subcategoryObj.value);
+			console.log('subcategoryObj.text:'+subcategoryObj.options[subcategoryObj.selectedIndex].text);
 			
 			var lastUpdatedObj = document.getElementById('lu'+id);
 			console.log('lastUpdatedObj:'+lastUpdatedObj.innerText);
@@ -216,9 +218,16 @@ app.controller('CrawlController',['$scope', '$rootScope','$http', '$interval', '
 			console.log('crawlIdObj:'+crawlIdObj.value);
 			
 			//validation
-			if(inputCpObj.value=='' && inputBrObj.value=='')
+			if(inputCpObj.value=='' || inputBrObj.value=='' || categoryObj.value=='' || subcategoryObj.value=='')
 			{
-				alert('Please enter a value for Company and Brand');
+				alert('Please enter a value for: Company, Brand, Category and SubCateogry');
+				return false;
+			}
+			
+			if(categoryObj.value=='? string:OPTIONS ?' || categoryObj.options[categoryObj.selectedIndex].text=='' 
+				|| subcategoryObj.value=='? string:OPTIONS ?' || subcategoryObj.options[subcategoryObj.selectedIndex].text=='')
+			{
+				alert('Please SELECT a value for: Category and SubCateogry');
 				return false;
 			}	
 				
@@ -233,10 +242,10 @@ app.controller('CrawlController',['$scope', '$rootScope','$http', '$interval', '
 				crawlId : crawlIdObj.value,
 				companyName: inputCpObj.value,
 				brandName: inputBrObj.value,
-				category: categoryObj.value,
-				categoryId:'',
-				subcategory: subcategoryObj.value,
-				subcategoryId:'',
+				category: categoryObj.options[categoryObj.selectedIndex].text,
+				categoryId:categoryObj.value,
+				subcategory: subcategoryObj.options[subcategoryObj.selectedIndex].text,
+				subcategoryId:subcategoryObj.value,
 				lastUpdatedDate:today
 			};
 			

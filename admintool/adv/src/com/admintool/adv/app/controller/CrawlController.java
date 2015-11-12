@@ -119,14 +119,16 @@ public class CrawlController {
 		try {
 			if(crawlBean!=null) {
 				if(StringUtils.isNotBlank(crawlBean.getCompanyName())
-						&& StringUtils.isNotBlank(crawlBean.getBrandName())) {
+						&& StringUtils.isNotBlank(crawlBean.getBrandName())
+							&& StringUtils.isNotBlank(crawlBean.getCategory())
+								&& StringUtils.isNotBlank(crawlBean.getSubcategory())) {
 					
 					boolean isSuccess = adService.saveAndUpdate(crawlBean);
 					if(!isSuccess) {
 						message = "ERROR in updating database!!";
 					}
-				}else {
-					message = "Missing information, add company and brand";
+				} else {
+					message = "Missing information: Add company, brand, Category and SubCateogry";
 				}
 			}else {
 				message = "data is not valid format";

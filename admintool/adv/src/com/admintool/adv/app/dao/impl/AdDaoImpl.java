@@ -96,10 +96,10 @@ public class AdDaoImpl extends BaseDaoImpl implements AdDao{
 		return advertisement;
 	}
 	public CategorySubCategory getCategorySubCategoryById(Integer subCategoryId) {
-		String baseQuery = "SELECT a FROM CategorySubCategory a WHERE a.id=:subCategoryId";
+		String baseQuery = "SELECT a FROM CategorySubCategory a WHERE a.subCategoryID=:subCategoryId";
 		Session session = getSessionFactory().getCurrentSession();
 		Query query = session.createQuery(baseQuery);
-		query.setParameter("categorySubCategoryId", subCategoryId);
+		query.setParameter("subCategoryId", subCategoryId);
 		CategorySubCategory categorySubCategory = (CategorySubCategory)query.uniqueResult();
 		return categorySubCategory;
 	}
@@ -146,6 +146,18 @@ public class AdDaoImpl extends BaseDaoImpl implements AdDao{
 		query.setParameter("websiteId", websiteId);
 		Website website = (Website)query.uniqueResult();
 		return website;	
+	}
+	
+	public Company isDuplicateCompanyData(String companyName, String brandName, String categoryName, String subCategoryName) {
+		String baseQuery = "SELECT c FROM Company c WHERE c.name=:companyName and c.brand=:brandName and category=:categoryName and subCategory=:subCategoryName";
+		Session session = getSessionFactory().getCurrentSession();
+		Query query = session.createQuery(baseQuery);
+		query.setParameter("companyName", companyName);
+		query.setParameter("brandName", brandName);
+		query.setParameter("categoryName", categoryName);
+		query.setParameter("subCategoryName", subCategoryName);
+		Company company = (Company)query.uniqueResult();
+		return company;	
 	}
 	
 	

@@ -38,4 +38,6 @@ public interface AdDao {
 	public Website getWebsiteById(Integer websiteId);
 	
 	public void saveOrUpdate(Object object);
+	
+	public Company isDuplicateCompanyData(String companyName, String brandName, String categoryName, String subCategoryName) ;
 }

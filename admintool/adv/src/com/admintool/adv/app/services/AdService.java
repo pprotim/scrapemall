@@ -63,6 +63,19 @@ public class AdService {
 		return null;
 	}
 	
+	public static Date getCurrentDateTime(){
+		Calendar cal = Calendar.getInstance();
+	    SimpleDateFormat sdf = AdService.getDateFormat();
+	    Date currentDateTime = cal.getTime();
+	    sdf.format(currentDateTime);
+	    return currentDateTime;
+	}
+	
+	public static SimpleDateFormat getDateFormat(){
+	    SimpleDateFormat sdf = new SimpleDateFormat(YYYY_MM_DD_HH_MM_SS_SS);
+	    return sdf;
+	}
+	
 	public List<CategorySubCategory> fetchAllCategoriesSubCategories(){
 		
 		List<CategorySubCategory> list =  adDao.fetchAllCategoriesSubCategories();
@@ -194,6 +207,15 @@ public class AdService {
 		
 		System.out.println("Inside saveAndUpdate");
 		
+		if(StringUtils.isBlank(crawlBean.getCategory())) {
+			String category = getCategoryStringFromCategoryID(crawlBean);
+			crawlBean.setCategory(category);
+		}
+		if(StringUtils.isBlank(crawlBean.getSubcategory())) {
+			String subcategory = getSubCategoryStringFromSubCategoryID(crawlBean);
+			crawlBean.setSubcategory(subcategory);
+		}
+		
 		Crawl crawl = adDao.getCrawlById(Integer.valueOf(crawlBean.getCrawlId()));
 		Date lastModified = AdService.getCurrentDateTime();
 		Company company = null;
@@ -204,14 +226,16 @@ public class AdService {
 				adDao.saveOrUpdate(company);
 				
 			}else {
-				company = getCompanyData(company, crawlBean, lastModified);
-				adDao.saveOrUpdate(company);
+				
+				//Check if company with 4 fields exists, if yes, then put the companyid in crawl table, if not then add new companyid to crawl table
+				company = createCompanyRecord(company, crawlBean, lastModified);
 			}
 			
 		} else {
 			
-			company = getCompanyData(null, crawlBean, lastModified);
-			adDao.saveOrUpdate(company);
+			//Check if company with 4 fields exists, if yes, then put the companyid in crawl table, if not then add new companyid to crawl table
+			company = createCompanyRecord(company, crawlBean, lastModified);
+			
 		}
 		
 		AdDate adDate = adDao.getAdDateById(crawl.getDateId());
@@ -227,12 +251,10 @@ public class AdService {
 		
 	}
 	
-	private Company getCompanyData(Company companyParam, CrawlBean crawlBean, Date lastModified) {
-		Company company = null;
-		if(companyParam==null)
+	private Company getCompanyData(Company company, CrawlBean crawlBean, Date lastModified) {
+		
+		if(company==null)
 			company = new Company();
-		else
-			company = companyParam;
 		
 		company.setName(crawlBean.getCompanyName());
 		company.setBrand(crawlBean.getBrandName());
@@ -243,17 +265,52 @@ public class AdService {
 				
 	}
 	
-	public static Date getCurrentDateTime(){
-		Calendar cal = Calendar.getInstance();
-	    SimpleDateFormat sdf = AdService.getDateFormat();
-	    Date currentDateTime = cal.getTime();
-	    sdf.format(currentDateTime);
-	    return currentDateTime;
+	private Company getCompanyDataFromDatabase(CrawlBean crawlBean) {
+		
+		String companyName = crawlBean.getCompanyName();
+		String brandName = crawlBean.getBrandName();
+		String categoryName = crawlBean.getCategory();
+		String subCategoryName = crawlBean.getSubcategory();
+		
+		Company company = adDao.isDuplicateCompanyData(companyName, brandName, categoryName, subCategoryName);
+		
+		return company;
 	}
 	
-	public static SimpleDateFormat getDateFormat(){
-	    SimpleDateFormat sdf = new SimpleDateFormat(YYYY_MM_DD_HH_MM_SS_SS);
-	    return sdf;
+	private Company createCompanyRecord(Company company, CrawlBean crawlBean, Date lastModified) {
+		company = getCompanyDataFromDatabase(crawlBean);
+		company = getCompanyData(company, crawlBean, lastModified);
+		adDao.saveOrUpdate(company);
+		return company;
+	}
+	
+	private String getCategoryStringFromCategoryID(CrawlBean crawlBean) {
+		
+		String category = StringUtils.EMPTY;
+		List<CategorySubCategory> listCatSubs = adDao.getSubCategoryListByCategoryId(Integer.valueOf(crawlBean.getCategoryId()));
+		if(listCatSubs!=null && listCatSubs.size()>0) {
+			CategorySubCategory categorySubCategory = listCatSubs.get(0);
+			category = categorySubCategory.getCategory();
+		} else {
+			category = crawlBean.getCategory();
+		}
+		
+		return category;
+		
+	}
+	
+	private String getSubCategoryStringFromSubCategoryID(CrawlBean crawlBean) {
+		
+		String subCategory = StringUtils.EMPTY;
+		CategorySubCategory categorySubCategory = adDao.getCategorySubCategoryById(Integer.valueOf(crawlBean.getSubcategoryId()));
+		if(categorySubCategory!=null) {
+			subCategory = categorySubCategory.getSubCategory();
+		} else {
+			subCategory = crawlBean.getSubcategory();
+		}
+		
+		return subCategory;
+		
 	}
 
 }
