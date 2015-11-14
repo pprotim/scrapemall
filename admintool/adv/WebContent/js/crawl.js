@@ -340,8 +340,6 @@ app.controller('CrawlController',['$scope', '$rootScope','$http', '$interval', '
 
 angular.module('adminApp').controller('ModalDemoCtrl', function ($scope, $modal, $log) {
 
-		
-
 });
 
 angular.module('adminApp').controller('PaginationDemoCtrl', function($scope){
