@@ -6,19 +6,7 @@ app.factory('SearchCrawlByDateService', function($http) {
 	   return {
 	        getCrawlData : function(dataObject) {
 	        	return $http.get("searchByDate", {params:dataObject}, {timeout: 300000});
-	        	/*$.ajax({
-  				   url: "searchByDate",
-  				   method:'GET',
-  				   data: dataObject,
-  				   async:true,
-  				   timeout:6000,
-  				   error: function(e) {						   
-  				     alert('issue in getting the crawl data='+e);
-  				   },
-  				   success: function(data) {
-  					  return angular.fromJson(data);
-  				   }			  
-	        	});*/
+	        	
 	        }
 	   }
 });
