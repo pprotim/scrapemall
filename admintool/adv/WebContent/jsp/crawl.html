@@ -28,21 +28,30 @@
 				<!-- <td width="10%"><a href="http://dummyimage.com/600x400/000/fff.png" download="alternate-filename.png"><img src="http://dummyimage.com/150x100/000/fff.png"></a></td> -->
 				<!-- <td width="10%"><a href="{{crawl.logo}}" download="alternate-filename.png"><img src="{{crawl.logo}}"></a></td> -->
 				
-				<td width="15%"><input type="text" name="cpname" id="icp{{$index}}" style='display:block; width:140px;' disabled='true' value={{crawl.companyName}}></input></td>
-				<td width="15%"><input type="text" name="brname" id="ibr{{$index}}" style='display:block; width:140px;' disabled='true' value={{crawl.brandName}}></input></td>
-				<td width="15%">
-					<select style="width: 100px;" ng-change="onChangeGetSubCategoryList(selectCategory)"
+				<td width="15%" align="center"><input type="text" name="cpname" id="icp{{$index}}" style='display:block; width:140px;' disabled='true' value={{crawl.companyName}}></input></td>
+				<td width="15%" align="center"><input type="text" name="brname" id="ibr{{$index}}" style='display:block; width:140px;' disabled='true' value={{crawl.brandName}}></input></td>
+				<td width="15%" align="center">
+					<select style="width: 100px;" ng-change="onChangeGetSubCategoryList(selectCategory, '{{$index}}')"
 					data-ng-model="selectCategory" name="category" id="ca{{$index}}" disabled>
 						<option id="cat{{$index}}" data-ng-repeat="categoryBean in listCategory" value="{{categoryBean.categoryID}}"
 						data-ng-selected="{{categoryBean.category == crawl.category}}" >{{categoryBean.category}}</option>
 					</select>
 
 				</td>
-				<td width="15%">
-					<select style="width: 100px;" data-ng-model="crawl.subcategory" name="subcategory" id="sca{{$index}}" disabled>
+				<td width="15%" align="center">
+					<div>
+					<select style="width: 100px;" data-ng-model="crawl.subcategory" name="subcategory" id="scaInitial{{$index}}" disabled>
 						<option data-ng-repeat="subCategoryBean in listSubCategory" value="{{subCategoryBean.subCategoryID}}"  
 						data-ng-selected="{{subCategoryBean.subCategory == crawl.subcategory}}">{{subCategoryBean.subCategory}}</option>
 					</select>
+					</div>
+					<div>
+					<select style="width: 100px;display:none;" data-ng-model="crawl.subcategory" name="subcategory" id="sca{{$index}}" disabled>
+						<option data-ng-repeat="subCategoryBean in listSubCategoryDropdown" value="{{subCategoryBean.subCategoryID}}"  
+						data-ng-selected="{{subCategoryBean.subCategory == crawl.subcategory}}">{{subCategoryBean.subCategory}}</option>
+					</select>
+					</div>
+					
 				</td>												
 				<td width="15%"><div id="lu{{$index}}">{{ crawl.lastUpdatedDate }}</div></td>
 				<td width="5%"><input type="button" name="saveRow" id="saveRowId{{$index}}" data-ng-click="saveRow($index)" disabled='true' value="SAVE"/></td>

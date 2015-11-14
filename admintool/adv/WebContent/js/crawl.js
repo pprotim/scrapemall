@@ -158,17 +158,25 @@ app.controller('CrawlController',['$scope', '$rootScope','$http', '$interval', '
 		}//submitForm function
 		
 		
-		$scope.onChangeGetSubCategoryList = function(categoryId) {
-			//var categoryId=$scope.selectCategory;
+		$scope.listSubCategoryDropdown = [];
+		$scope.onChangeGetSubCategoryList = function(categoryId, index) {
 	    	console.log('Received categoryId='+categoryId);
+	    	console.log('Received index='+index);
+	    	
 	    	var dataObject = {
-	    			categoryId : categoryId,
+	    		categoryId : categoryId,
 			};
 	    	
 	    	GetSubCategoryServiceByCategoryId.getSubCategoryByCategoryId(dataObject).then(function(result) {
-				$scope.listSubCategory = result.data;
-				console.log('$scope.listSubCategory By GetSubCategoryServiceByCategoryId method ='+$scope.listSubCategory);
+				//$scope.listSubCategory = result.data;
+	    		$scope.listSubCategoryDropdown = result.data;
+	    		var subcategoryInitialObj = document.getElementById('scaInitial'+index);
+	    		subcategoryInitialObj.style.display = 'none';
+	    		var subcategoryObj = document.getElementById('sca'+index);
+	    		subcategoryObj.style.display = 'block';
+				console.log('$scope.listSubCategoryDropdown By GetSubCategoryServiceByCategoryId method ='+$scope.listSubCategoryDropdown);
 		    });
+	    	
 	    	return false;
 	    }
 	    
@@ -186,6 +194,9 @@ app.controller('CrawlController',['$scope', '$rootScope','$http', '$interval', '
 			
 			var categoryObj = document.getElementById("ca"+id);
 			categoryObj.disabled=false;
+			
+			var subcategoryInitialObj = document.getElementById('scaInitial'+id);//scaInitial
+			subcategoryInitialObj.disabled=false;
 			
 			var subcategoryObj = document.getElementById('sca'+id);
 			subcategoryObj.disabled=false;
