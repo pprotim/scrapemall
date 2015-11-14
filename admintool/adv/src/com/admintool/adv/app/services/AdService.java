@@ -16,10 +16,12 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.admintool.adv.app.beans.CrawlBean;
+import com.admintool.adv.app.beans.ResultBean;
 import com.admintool.adv.app.beans.SubCategoryBean;
 import com.admintool.adv.app.dao.AdDao;
 import com.admintool.adv.app.entity.AdDate;
@@ -44,6 +46,15 @@ public class AdService {
 	public final static String IMAGE_TEMP_FOLDER = "imagesTempFolder";
 
 	public static final String YYYY_MM_DD_HH_MM_SS_SS = "yyyy-MM-dd HH:mm:ss.SS";
+	
+	@Value("${message_duplicate_company_data}")
+	private String DUPLICATE_COMPANY_DATA;
+	
+	@Value("${message_row_success}")
+	private String ROW_UPDATED_SUCCESSFULLY;
+	
+	@Value("${message_failure}")
+	private String FAILURE_MESSAGE;
 	
 	@Autowired
 	private AdDao adDao;
@@ -203,10 +214,11 @@ public class AdService {
 	
 	
 	@Transactional
-	public boolean saveAndUpdate(CrawlBean crawlBean) throws Exception{
+	public ResultBean saveAndUpdate(CrawlBean crawlBean) throws Exception{
 		
 		System.out.println("Inside saveAndUpdate");
-		
+		ResultBean resultBean = null;
+				
 		if(StringUtils.isBlank(crawlBean.getCategory())) {
 			String category = getCategoryStringFromCategoryID(crawlBean);
 			crawlBean.setCategory(category);
@@ -216,26 +228,54 @@ public class AdService {
 			crawlBean.setSubcategory(subcategory);
 		}
 		
+		// Check if company with 4 fields exists, if yes, then put the companyid in crawl table, if not then add new companyid to crawl table
+		Company companyInDB = null;
+		List<Company> companyList = isCompanyDataExistsInDatabase(crawlBean);
+		if(!companyList.isEmpty()) {
+			if(companyList.size()>1) {
+				resultBean = new ResultBean();
+				resultBean.setSucess(Boolean.FALSE);
+				List<Integer> sequenceIds = new ArrayList<Integer>();
+				for(Company c : companyList) { sequenceIds.add(c.getId()); }
+				resultBean.setMessage(DUPLICATE_COMPANY_DATA+":"+sequenceIds);
+				return resultBean;
+			} else {
+				companyInDB = companyList.get(0);
+			}
+		}
+		
+		Company company = null;
 		Crawl crawl = adDao.getCrawlById(Integer.valueOf(crawlBean.getCrawlId()));
 		Date lastModified = AdService.getCurrentDateTime();
-		Company company = null;
 		if(crawl.getCompanyId()!=null) {
 			company = adDao.getCompanyById(crawl.getCompanyId());
 			if(company!=null) {
-				company = getCompanyData(company, crawlBean, lastModified);
-				adDao.saveOrUpdate(company);
-				
+				//At this point below there is a different row exists in db with same value, assign same db row to crawl table company column.
+				if(companyInDB!=null && company.getId().intValue() != companyInDB.getId().intValue()){
+					
+					company = companyInDB;// crawl should point to same company
+					
+				} else if(companyInDB!=null && company.getId().intValue() == companyInDB.getId().intValue()){
+					
+					company = getCompanyData(company, crawlBean, lastModified);
+					adDao.saveOrUpdate(company);
+					
+				} else {
+					company = companyInDB; // companyInDB is null
+					company = getCompanyData(company, crawlBean, lastModified);
+					adDao.saveOrUpdate(company);
+					
+				}
 			}else {
-				
-				//Check if company with 4 fields exists, if yes, then put the companyid in crawl table, if not then add new companyid to crawl table
+				//In this else, if companyid is not present in company table, then create company object and assign to crawl table.
+				company = companyInDB;
 				company = createCompanyRecord(company, crawlBean, lastModified);
 			}
-			
 		} else {
-			
-			//Check if company with 4 fields exists, if yes, then put the companyid in crawl table, if not then add new companyid to crawl table
+			//In this else, if company does not exists in company table and there is no similar records also, then create company object and assign to crawl table.
+			//Else if the similar records exists, then assign to company object
+			company = companyInDB;
 			company = createCompanyRecord(company, crawlBean, lastModified);
-			
 		}
 		
 		AdDate adDate = adDao.getAdDateById(crawl.getDateId());
@@ -247,14 +287,20 @@ public class AdService {
 		crawl.setModifiedDateTime(lastModified);
 		crawl.setCompanyId(company.getId());
 		adDao.saveOrUpdate(crawl);
-		return true;
+		
+		resultBean = new ResultBean();
+		resultBean.setSucess(Boolean.TRUE);
+		resultBean.setMessage(ROW_UPDATED_SUCCESSFULLY);
+		return resultBean;
 		
 	}
 	
 	private Company getCompanyData(Company company, CrawlBean crawlBean, Date lastModified) {
 		
-		if(company==null)
+		if(company==null){ 
 			company = new Company();
+			company.setCreatedDateTime(lastModified);
+		}
 		
 		company.setName(crawlBean.getCompanyName());
 		company.setBrand(crawlBean.getBrandName());
@@ -265,25 +311,24 @@ public class AdService {
 				
 	}
 	
-	private Company getCompanyDataFromDatabase(CrawlBean crawlBean) {
+	private Company createCompanyRecord(Company company, CrawlBean crawlBean, Date lastModified) {
+		company = getCompanyData(company, crawlBean, lastModified);
+		adDao.saveOrUpdate(company);
+		return company;
+	}
+	
+	
+	public List<Company> isCompanyDataExistsInDatabase(CrawlBean crawlBean) {
 		
 		String companyName = crawlBean.getCompanyName();
 		String brandName = crawlBean.getBrandName();
 		String categoryName = crawlBean.getCategory();
 		String subCategoryName = crawlBean.getSubcategory();
 		
-		Company company = adDao.isDuplicateCompanyData(companyName, brandName, categoryName, subCategoryName);
+		List<Company> companyList = adDao.isDuplicateCompanyData(companyName, brandName, categoryName, subCategoryName);
 		
-		return company;
+		return companyList;
 	}
-	
-	private Company createCompanyRecord(Company company, CrawlBean crawlBean, Date lastModified) {
-		company = getCompanyDataFromDatabase(crawlBean);
-		company = getCompanyData(company, crawlBean, lastModified);
-		adDao.saveOrUpdate(company);
-		return company;
-	}
-	
 	private String getCategoryStringFromCategoryID(CrawlBean crawlBean) {
 		
 		String category = StringUtils.EMPTY;

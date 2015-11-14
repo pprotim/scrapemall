@@ -148,16 +148,18 @@ public class AdDaoImpl extends BaseDaoImpl implements AdDao{
 		return website;	
 	}
 	
-	public Company isDuplicateCompanyData(String companyName, String brandName, String categoryName, String subCategoryName) {
-		String baseQuery = "SELECT c FROM Company c WHERE c.name=:companyName and c.brand=:brandName and category=:categoryName and subCategory=:subCategoryName";
+	@SuppressWarnings("unchecked")
+	public List<Company> isDuplicateCompanyData(String companyName, String brandName, String categoryName, String subCategoryName) {
+		String baseQuery = "SELECT c FROM Company c WHERE c.name=:companyName and c.brand=:brandName and category=:categoryName "
+				+ "and subCategory=:subCategoryName order by ModifiedDateTime desc";
 		Session session = getSessionFactory().getCurrentSession();
 		Query query = session.createQuery(baseQuery);
 		query.setParameter("companyName", companyName);
 		query.setParameter("brandName", brandName);
 		query.setParameter("categoryName", categoryName);
 		query.setParameter("subCategoryName", subCategoryName);
-		Company company = (Company)query.uniqueResult();
-		return company;	
+		List<Company> companyList = (List<Company>)query.list();
+		return companyList;	
 	}
 	
 	

@@ -18,6 +18,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.admintool.adv.app.beans.CategoryBean;
 import com.admintool.adv.app.beans.CategorySubCategoryBean;
 import com.admintool.adv.app.beans.CrawlBean;
+import com.admintool.adv.app.beans.ResultBean;
 import com.admintool.adv.app.beans.SubCategoryBean;
 import com.admintool.adv.app.entity.CategorySubCategory;
 import com.admintool.adv.app.services.AdService;
@@ -41,6 +43,16 @@ public class CrawlController {
 	private static final String CATEGORY_BEAN_LIST = "CATEGORY_BEAN_LIST";
 	private static final String SUBCATEGORY_BEAN_LIST = "SUBCATEGORY_BEAN_LIST";
 	private static final String SUB_AND_CATEGORY_BEAN_LIST = "SUB_AND_CATEGORY_BEAN_LIST";
+	
+	@Value("${message_missing_information}")
+	private String MISSING_INFORMATION;
+	
+	@Value("${message_invalid_format}")
+	private String INVALID_FORMAT;
+	
+	@Value("${message_failure}")
+	private String FAILURE_MESSAGE;
+	
 	@Autowired
 	private AdService adService; 
 	
@@ -123,15 +135,17 @@ public class CrawlController {
 							&& StringUtils.isNotBlank(crawlBean.getCategory())
 								&& StringUtils.isNotBlank(crawlBean.getSubcategory())) {
 					
-					boolean isSuccess = adService.saveAndUpdate(crawlBean);
-					if(!isSuccess) {
-						message = "ERROR in updating database!!";
+					ResultBean resultBean = adService.saveAndUpdate(crawlBean);
+					if(resultBean!=null) {
+						message = resultBean.getMessage();
+					} else {
+						message = FAILURE_MESSAGE;
 					}
 				} else {
-					message = "Missing information: Add company, brand, Category and SubCateogry";
+					message = MISSING_INFORMATION;
 				}
 			}else {
-				message = "data is not valid format";
+				message = INVALID_FORMAT;
 			}
 		
 		}catch(Exception e) {

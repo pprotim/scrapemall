@@ -39,5 +39,5 @@ public interface AdDao {
 	
 	public void saveOrUpdate(Object object);
 	
-	public Company isDuplicateCompanyData(String companyName, String brandName, String categoryName, String subCategoryName) ;
+	public List<Company> isDuplicateCompanyData(String companyName, String brandName, String categoryName, String subCategoryName) ;
 }

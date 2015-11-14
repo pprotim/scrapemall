@@ -104,8 +104,11 @@ app.controller('CrawlController',['$scope', '$rootScope','$http', '$interval', '
 	    
 		$scope.submitCrawlForm = function () {
 	    	
+			$("#info").text('');
+			
 	    	$scope.showProgressBar = true;
 	    	$scope.showResultTable = false;
+	    	$scope.zeroRecords = false;
 	    	
 			var searchDateVar = $scope.crawl.searchDate;
 			if(searchDateVar==='') {
@@ -196,6 +199,8 @@ app.controller('CrawlController',['$scope', '$rootScope','$http', '$interval', '
 		
 
 		$scope.saveRow = function(id) {
+			
+			$("#info").text('');
 			
 			var inputCpObj = document.getElementById('icp'+id);
 			console.log('inputCpObj:'+inputCpObj.value);
@@ -370,6 +375,7 @@ angular.module('adminApp').controller('PaginationDemoCtrl', function($scope){
 
 		  $scope.pageChangeHandler = function(num) {
 		    console.log('going to page ' + num);
+		    $("#info").text('');
 		  };
 	
 });
