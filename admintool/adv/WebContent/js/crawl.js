@@ -202,7 +202,7 @@ app.controller('CrawlController',['$scope', '$rootScope','$http', '$interval', '
 			
 			$("#info").text('');
 			
-			console.log('=====================Search Date!!!'+$scope.crawl.searchDate);
+			/*console.log('=====================Search Date!!!'+$scope.crawl.searchDate);
 			console.log('=====================INDEX VALUE!!!'+id);			
 			console.log('Going to update the record with logo:'+$scope.resultRows[id].logo);
 			console.log('Going to update the record with crawlId:'+$scope.resultRows[id].crawlId);
@@ -211,7 +211,7 @@ app.controller('CrawlController',['$scope', '$rootScope','$http', '$interval', '
 			console.log('Going to update the record with category:'+$scope.resultRows[id].category);
 			console.log('Going to update the record with categoryId:'+$scope.resultRows[id].categoryId);
 			console.log('Going to update the record with subcategory:'+$scope.resultRows[id].subcategory);
-			console.log('Going to update the record with subcategoryId:'+$scope.resultRows[id].subcategoryId);
+			console.log('Going to update the record with subcategoryId:'+$scope.resultRows[id].subcategoryId);*/
 			
 			var inputLogoObj = document.getElementById('logo'+id);
 			console.log('inputLogoObj URL:'+inputLogoObj.src);
@@ -299,14 +299,14 @@ app.controller('CrawlController',['$scope', '$rootScope','$http', '$interval', '
 					}
 				}*/
 				
-				console.log('After updating the record with logo:'+$scope.resultRows[id].logo);
+				/*console.log('After updating the record with logo:'+$scope.resultRows[id].logo);
 				console.log('After updating the record with crawlId:'+$scope.resultRows[id].crawlId);
 				console.log('After updating the record with companyName:'+$scope.resultRows[id].companyName);
 				console.log('After updating the record with brandName:'+$scope.resultRows[id].brandName);
 				console.log('After updating the record with category:'+$scope.resultRows[id].category);
 				console.log('After updating the record with categoryId:'+$scope.resultRows[id].categoryId);
 				console.log('After updating the record with subcategory:'+$scope.resultRows[id].subcategory);
-				console.log('After updating the record with subcategoryId:'+$scope.resultRows[id].subcategoryId);
+				console.log('After updating the record with subcategoryId:'+$scope.resultRows[id].subcategoryId);*/
 			      
 				$("#info").text(data.message);
 			});
