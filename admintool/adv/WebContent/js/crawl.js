@@ -146,7 +146,7 @@ app.controller('CrawlController',['$scope', '$rootScope','$http', '$interval', '
 		}//submitForm function
 		
 		
-		$scope.listSubCategoryDropdown = [];
+		$scope.listSubCategoryDropdown = {};
 		$scope.onChangeGetSubCategoryList = function(categoryId, index) {
 	    	console.log('Received categoryId='+categoryId);
 	    	console.log('Received index='+index);
@@ -157,12 +157,13 @@ app.controller('CrawlController',['$scope', '$rootScope','$http', '$interval', '
 	    	
 	    	GetSubCategoryServiceByCategoryId.getSubCategoryByCategoryId(dataObject).then(function(result) {
 				//$scope.listSubCategory = result.data;
-	    		$scope.listSubCategoryDropdown = result.data;
+	    		$scope.listSubCategoryDropdown[index] = result.data;
 	    		var subcategoryInitialObj = document.getElementById('scaInitial'+index);
 	    		subcategoryInitialObj.style.display = 'none';
 	    		var subcategoryObj = document.getElementById('sca'+index);
 	    		subcategoryObj.style.display = 'block';
-				console.log('$scope.listSubCategoryDropdown By GetSubCategoryServiceByCategoryId method ='+$scope.listSubCategoryDropdown);
+				console.log('$scope.listSubCategoryDropdown By GetSubCategoryServiceByCategoryId method ='+$scope.listSubCategoryDropdown[index]);
+	    		//console.log('Got the sub category dropdown.....:'+$scope.listSubCategoryDropdown);
 		    });
 	    	
 	    	return false;
@@ -200,6 +201,20 @@ app.controller('CrawlController',['$scope', '$rootScope','$http', '$interval', '
 		$scope.saveRow = function(id) {
 			
 			$("#info").text('');
+			
+			console.log('=====================Search Date!!!'+$scope.crawl.searchDate);
+			console.log('=====================INDEX VALUE!!!'+id);			
+			console.log('Going to update the record with logo:'+$scope.resultRows[id].logo);
+			console.log('Going to update the record with crawlId:'+$scope.resultRows[id].crawlId);
+			console.log('Going to update the record with companyName:'+$scope.resultRows[id].companyName);
+			console.log('Going to update the record with brandName:'+$scope.resultRows[id].brandName);
+			console.log('Going to update the record with category:'+$scope.resultRows[id].category);
+			console.log('Going to update the record with categoryId:'+$scope.resultRows[id].categoryId);
+			console.log('Going to update the record with subcategory:'+$scope.resultRows[id].subcategory);
+			console.log('Going to update the record with subcategoryId:'+$scope.resultRows[id].subcategoryId);
+			
+			var inputLogoObj = document.getElementById('logo'+id);
+			console.log('inputLogoObj URL:'+inputLogoObj.src);
 			
 			var inputCpObj = document.getElementById('icp'+id);
 			console.log('inputCpObj:'+inputCpObj.value);
@@ -243,6 +258,7 @@ app.controller('CrawlController',['$scope', '$rootScope','$http', '$interval', '
 			
 			//creating json object
 			var crawlBean = {
+				logo : inputLogoObj.src,
 				crawlId : crawlIdObj.value,
 				companyName: inputCpObj.value,
 				brandName: inputBrObj.value,
@@ -262,7 +278,37 @@ app.controller('CrawlController',['$scope', '$rootScope','$http', '$interval', '
 			    data: JSON.stringify(crawlBean)
 			}).done(function(data) {
 			      
-				$("#info").text(data);
+				//$("#info").text(data);
+				
+				console.log('After update the record with new values:'+data.crawlBean);
+				//find the record to be updated
+				var recordNumber = ($scope.pageSize * ($scope.currentPage-1))+(id);
+				console.log('recordNumber which needs to be udpated in resultRows is recordNumber='+recordNumber);
+				$scope.resultRows[recordNumber] = data.crawlBean;
+					
+				/*for ( var i = 0; i < $scope.resultRows.length; i++) {
+					console.log("i value="+i+", id value="+id)
+					if(i == recordNumber) {
+						console.log('After updating the record with crawlId:'+$scope.resultRows[id].crawlId);
+						console.log('After updating the record with companyName:'+$scope.resultRows[id].companyName);
+						console.log('After updating the record with brandName:'+$scope.resultRows[id].brandName);
+						console.log('After updating the record with category:'+$scope.resultRows[id].category);
+						console.log('After updating the record with categoryId:'+$scope.resultRows[id].categoryId);
+						console.log('After updating the record with subcategory:'+$scope.resultRows[id].subcategory);
+						console.log('After updating the record with subcategoryId:'+$scope.resultRows[id].subcategoryId);
+					}
+				}*/
+				
+				console.log('After updating the record with logo:'+$scope.resultRows[id].logo);
+				console.log('After updating the record with crawlId:'+$scope.resultRows[id].crawlId);
+				console.log('After updating the record with companyName:'+$scope.resultRows[id].companyName);
+				console.log('After updating the record with brandName:'+$scope.resultRows[id].brandName);
+				console.log('After updating the record with category:'+$scope.resultRows[id].category);
+				console.log('After updating the record with categoryId:'+$scope.resultRows[id].categoryId);
+				console.log('After updating the record with subcategory:'+$scope.resultRows[id].subcategory);
+				console.log('After updating the record with subcategoryId:'+$scope.resultRows[id].subcategoryId);
+			      
+				$("#info").text(data.message);
 			});
 			
 		}

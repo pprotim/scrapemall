@@ -123,11 +123,11 @@ public class CrawlController {
 	}
 	
 	@RequestMapping(value = { "/save" }, method = RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody String save(HttpServletRequest request, Model model, 
+	public @ResponseBody ResultBean save(HttpServletRequest request, Model model, 
 			@RequestBody CrawlBean crawlBean) {
 
 		
-		String message = "Row updated successfully!!";
+		ResultBean resultBean = new ResultBean();
 		try {
 			if(crawlBean!=null) {
 				if(StringUtils.isNotBlank(crawlBean.getCompanyName())
@@ -135,25 +135,29 @@ public class CrawlController {
 							&& StringUtils.isNotBlank(crawlBean.getCategory())
 								&& StringUtils.isNotBlank(crawlBean.getSubcategory())) {
 					
-					ResultBean resultBean = adService.saveAndUpdate(crawlBean);
+					resultBean = adService.saveAndUpdate(crawlBean);
 					if(resultBean!=null) {
-						message = resultBean.getMessage();
+						String message = resultBean.getMessage();
+						System.err.println("message="+message);
+						resultBean.setCrawlBean(crawlBean);
 					} else {
-						message = FAILURE_MESSAGE;
+						resultBean = new ResultBean();
+						resultBean.setSucess(Boolean.FALSE);
+						resultBean.setMessage(FAILURE_MESSAGE);
 					}
 				} else {
-					message = MISSING_INFORMATION;
+					resultBean.setMessage(MISSING_INFORMATION);
 				}
 			}else {
-				message = INVALID_FORMAT;
+				resultBean.setMessage(INVALID_FORMAT);
 			}
 		
 		}catch(Exception e) {
-			message = "EXCEPTION OCCURED : "+e.getMessage();
+			resultBean.setMessage("EXCEPTION OCCURED : "+e.getMessage());
 			System.out.println(ExceptionUtils.getStackTrace(e));
 			
 		}
-		return message;
+		return resultBean;
 	}
 	
 	@RequestMapping(value = { "/historical" }, method = RequestMethod.GET)
@@ -228,6 +232,8 @@ public class CrawlController {
 			}
 		}
 		List<SubCategoryBean> listSubCategory = adService.getSubCategoryListByCategoryId(categoryId);
+		
+		model.addAttribute("listSubCategoryDropdown", listSubCategory);
 		
 		return listSubCategory;
 	}
