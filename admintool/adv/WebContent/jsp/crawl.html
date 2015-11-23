@@ -28,8 +28,8 @@
 				<!-- <td width="10%"><a href="http://dummyimage.com/600x400/000/fff.png" download="alternate-filename.png"><img src="http://dummyimage.com/150x100/000/fff.png"></a></td> -->
 				<!-- <td width="10%"><a href="{{crawl.logo}}" download="alternate-filename.png"><img src="{{crawl.logo}}"></a></td> -->
 				
-				<td width="15%" align="center"><input type="text" name="cpname" id="icp{{$index}}" style='display:block; width:140px;' disabled='true' value={{crawl.companyName}}></input></td>
-				<td width="15%" align="center"><input type="text" name="brname" id="ibr{{$index}}" style='display:block; width:140px;' disabled='true' value={{crawl.brandName}}></input></td>
+				<td width="15%" align="center"><input type="text" auto-complete ui-items="companyNames" name="cpname" id="icp{{$index}}" style='display:block; width:140px;' disabled='true' value={{crawl.companyName}}></input></td>
+				<td width="15%" align="center"><input type="text" auto-complete ui-items="brandNames"  name="brname" id="ibr{{$index}}" style='display:block; width:140px;' disabled='true' value={{crawl.brandName}}></input></td>
 				<td width="15%" align="center">
 					<select style="width: 100px;" ng-change="onChangeGetSubCategoryList(selectCategory, '{{$index}}')"
 					data-ng-model="selectCategory" name="category" id="ca{{$index}}" disabled>

@@ -2,6 +2,19 @@
 
 var app = angular.module('adminApp', ['ui.bootstrap','angularUtils.directives.dirPagination']);
 var currentDate = new Date();
+
+app.directive('autoComplete', function($timeout) {
+    return function(scope, iElement, iAttrs) {
+            iElement.autocomplete({
+                source: scope[iAttrs.uiItems],
+                select: function() {
+                    $timeout(function() {
+                      iElement.trigger('input');
+                    }, 0);
+                }
+            });
+    };
+});
 app.factory('SearchCrawlByDateService', function($http) {
 	   return {
 	        getCrawlData : function(dataObject) {
@@ -43,6 +56,8 @@ app.controller('CrawlController',['$scope', '$rootScope','$http', '$interval', '
 	    $scope.zeroRecords = false;
 	    $scope.showProgressBar = false;
 	    $rootScope.resultRows = [];
+	    $scope.companyNames = [];
+	    $scope.brandNames = [];
 	    $scope.tableColumns = ['logo','companyName','brandName','categoryId','category','subcategoryId','subcategory','lastUpdatedDate', 'SAVE','EDIT'];
 	    
 	    $scope.crawl = {
@@ -134,6 +149,12 @@ app.controller('CrawlController',['$scope', '$rootScope','$http', '$interval', '
 	     	    		$scope.zeroRecords = false;
 	     	    		console.log('$scope.resultRows='+$scope.resultRows);
 	     	    		//$scope.$watch('currentPage + numPerPage', updateFilteredItems);
+	     	    		
+	     	    		for (var item in $scope.resultRows) {
+	     	    			$scope.companyNames [item] = $scope.resultRows[ item ].companyName;
+	     	    			$scope.brandNames [item] = $scope.resultRows[ item ].brandName;
+	     	    			console.log('item='+item+', companyName='+$scope.companyNames [item]+', brandName='+$scope.brandNames [item]);
+	     	    		}
 	     			   
 	     		   } else {
 	     			   $scope.showResultTable = false;
@@ -197,6 +218,15 @@ app.controller('CrawlController',['$scope', '$rootScope','$http', '$interval', '
 					
 		}//editRow function...
 		
+		$scope.autoPopulateComapnyName = function(id) {
+			console.log('inside autoPopulateComapnyName method with id='+id);
+			$( "icp"+id ).autocomplete({source: $scope.companyNames});
+		}
+		
+		$scope.autoPopulateBrandName = function(id) {
+			console.log('inside autoPopulateBrandName method with id='+id);
+			$( "ibr"+id ).autocomplete({source: $scope.brandNames});
+		}
 
 		$scope.saveRow = function(id) {
 			
@@ -395,3 +425,4 @@ angular.module('adminApp').controller('PaginationDemoCtrl', function($scope){
 		  };
 	
 });
+
