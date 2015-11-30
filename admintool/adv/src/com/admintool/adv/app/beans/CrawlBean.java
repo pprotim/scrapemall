@@ -14,6 +14,7 @@ public class CrawlBean {
 	private String subcategoryId;
 	private String subcategory;
 	private String lastUpdatedDate;
+	private String companyUrl;//homePage
 	
 	public String getCrawlId() {
 		return crawlId;
@@ -69,10 +70,19 @@ public class CrawlBean {
 	public void setLastUpdatedDate(String lastUpdatedDate) {
 		this.lastUpdatedDate = lastUpdatedDate;
 	}
+	
+	public String getCompanyUrl() {
+		return companyUrl;
+	}
+	public void setCompanyUrl(String companyUrl) {
+		this.companyUrl = companyUrl;
+	}
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("CrawlBean [logo=");
+		builder.append("CrawlBean [crawlId=");
+		builder.append(crawlId);
+		builder.append(", logo=");
 		builder.append(logo);
 		builder.append(", companyName=");
 		builder.append(companyName);
@@ -88,6 +98,8 @@ public class CrawlBean {
 		builder.append(subcategory);
 		builder.append(", lastUpdatedDate=");
 		builder.append(lastUpdatedDate);
+		builder.append(", companyUrl=");
+		builder.append(companyUrl);
 		builder.append("]");
 		return builder.toString();
 	}

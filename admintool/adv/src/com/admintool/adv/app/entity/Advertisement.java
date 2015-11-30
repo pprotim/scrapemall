@@ -41,6 +41,9 @@ public class Advertisement {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDateTime;
 	
+	@Column(name = "CompanyID")
+	private Integer companyId;
+	
 	
 	public Integer getId() {
 		return id;
@@ -83,5 +86,11 @@ public class Advertisement {
 	}
 	public void setModifiedDateTime(Date modifiedDateTime) {
 		this.modifiedDateTime = modifiedDateTime;
+	}
+	public Integer getCompanyId() {
+		return companyId;
+	}
+	public void setCompanyId(Integer companyId) {
+		this.companyId = companyId;
 	}
 }

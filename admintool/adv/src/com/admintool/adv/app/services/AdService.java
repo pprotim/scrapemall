@@ -24,7 +24,6 @@ import com.admintool.adv.app.beans.CrawlBean;
 import com.admintool.adv.app.beans.ResultBean;
 import com.admintool.adv.app.beans.SubCategoryBean;
 import com.admintool.adv.app.dao.AdDao;
-import com.admintool.adv.app.entity.AdDate;
 import com.admintool.adv.app.entity.Advertisement;
 import com.admintool.adv.app.entity.CategorySubCategory;
 import com.admintool.adv.app.entity.Company;
@@ -112,10 +111,6 @@ public class AdService {
 	public List<CrawlBean> searchCrawlDetails(Map<String, Object> searchCriteria,
 			HttpSession session){
 		
-		//String tempDirectory = this.getUserDirectory(session);
-		//String tempFolder = (String)session.getAttribute(AdService.IMAGE_TEMP_FOLDER);
-		//String datetimeS3Format = (String)searchCriteria.get("datetimeS3Format");
-		
 		List<Crawl> list = adDao.searchCrawlDetails(searchCriteria);
 		if(!list.isEmpty()) {
 			List<CrawlBean> listCrawlBean = new ArrayList<CrawlBean>(list.size());
@@ -136,15 +131,16 @@ public class AdService {
 					count++;
 				}
 				
-				if(crawl.getCompanyId()!=null) {
+				if(advertisement.getCompanyId()!=null) {
 					
-					Company company = adDao.getCompanyById(crawl.getCompanyId());
+					Company company = adDao.getCompanyById(advertisement.getCompanyId());
 					crawlBean.setCompanyName(company.getName());
 					crawlBean.setBrandName(company.getBrand());
 					crawlBean.setCategory(company.getCategory());
 					crawlBean.setSubcategory(company.getSubCategory());
+					crawlBean.setCompanyUrl(company.getHomePage());
+					crawlBean.setLastUpdatedDate(AdService.getDateFormat().format(advertisement.getModifiedDateTime()));
 				}
-				crawlBean.setLastUpdatedDate(AdService.getDateFormat().format(crawl.getModifiedDateTime()));
 				listCrawlBean.add(crawlBean);
 			}
 			
@@ -253,7 +249,8 @@ public class AdService {
 				//At this point below there is a different row exists in db with same value, assign same db row to crawl table company column.
 				if(companyInDB!=null && company.getId().intValue() != companyInDB.getId().intValue()){
 					
-					company = companyInDB;// crawl should point to same company
+					company = companyInDB;// crawl should point to same company and should update data sent from UI
+					adDao.saveOrUpdate(getCompanyData(company, crawlBean, lastModified));
 					
 				} else if(companyInDB!=null && company.getId().intValue() == companyInDB.getId().intValue()){
 					
@@ -278,15 +275,17 @@ public class AdService {
 			company = createCompanyRecord(company, crawlBean, lastModified);
 		}
 		
-		AdDate adDate = adDao.getAdDateById(crawl.getDateId());
-		if(adDate!=null) {
-			adDate.setDatetime(lastModified);
-			adDao.saveOrUpdate(adDate);
+		//Saving company object to Ad table.
+		Advertisement advertisement = adDao.getAdvertisementById(crawl.getAdId());
+		if(advertisement!=null){
+			advertisement.setModifiedDateTime(lastModified);
+			advertisement.setCompanyId(company.getId());
+			adDao.saveOrUpdate(advertisement);
 		}
 		
-		crawl.setModifiedDateTime(lastModified);
-		crawl.setCompanyId(company.getId());
-		adDao.saveOrUpdate(crawl);
+		//crawl.setModifiedDateTime(lastModified);
+		//crawl.setCompanyId(company.getId());
+		//adDao.saveOrUpdate(crawl);
 		
 		resultBean = new ResultBean();
 		resultBean.setSucess(Boolean.TRUE);
@@ -306,6 +305,7 @@ public class AdService {
 		company.setBrand(crawlBean.getBrandName());
 		company.setCategory(crawlBean.getCategory());
 		company.setSubCategory(crawlBean.getSubcategory());
+		company.setHomePage(crawlBean.getCompanyUrl());
 		company.setModifiedDateTime(lastModified);
 		return company;
 				

@@ -54,7 +54,11 @@
 					</div>
 					
 				</td>												
-				<td width="15%"><div id="lu{{$index}}">{{ crawl.lastUpdatedDate }}</div></td>
+				<!-- <td width="15%"><div style="display:none;" id="lu{{$index}}">{{ crawl.lastUpdatedDate }}</div></td> -->
+				<td width="15%" align="center">
+					<div style="display:none;" id="lu{{$index}}">{{ crawl.lastUpdatedDate }}</div>
+					<input type="text" name="companyUrl" id="icu{{$index}}" style='display:block; width:140px;' disabled='true' value={{crawl.companyUrl}}></input>
+				</td>
 				<td width="5%"><input type="button" name="saveRow" id="saveRowId{{$index}}" data-ng-click="saveRow($index)" disabled='true' value="SAVE"/></td>
 				<td width="5%"><input type="button" name="editRow" data-ng-click="editRow($index)" value="EDIT"/></td>
 				<td width="1%"><input type="hidden" name="crawlId" id="crawlId{{$index}}" style='display:block; width:40px;' disabled='true' value={{crawl.crawlId}}></input></td>
